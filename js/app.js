@@ -451,9 +451,8 @@
       reviewerTurn: reviewerTurn
     };
 
-    // Track proposer action
-    recordAction(proposerTurn, 'proposal', `Proposed ${activePlayerForModal.name}`, activePlayerForModal);
-    recordAction(proposerTurn, 'reason', `Gave reason: "${chosenReason}"`, activePlayerForModal);
+    // Track proposer action as a single unified decision (proposal + reason)
+    recordAction(proposerTurn, 'proposal', `Proposed ${activePlayerForModal.name} with reason: "${chosenReason}"`, activePlayerForModal);
 
     closeProposeModal();
     setupPeerFeedbackScreen();
@@ -515,9 +514,8 @@
     const prop = state.pendingProposal;
     if (!prop) return;
 
-    // Track reviewer actions
+    // Track reviewer decision (evaluation + critique reason)
     recordAction(prop.reviewerTurn, 'review', `Marked ${decisionType}: "${reviewerReason}"`, prop.player);
-    recordAction(prop.reviewerTurn, 'reason', `Peer review reason: "${reviewerReason}"`, prop.player);
 
     if (decisionType === 'agree') {
       // Run AI feedback rules
@@ -909,16 +907,59 @@
   }
 
   // --- FEATURE E: COLLABORATION SIGNALS & ANTI-MONOPOLY (DESIGN CHALLENGE) ---
+  function recalcActionsFromSquad() {
+    let pA = 0, rA = 0, revA = 0;
+    let pB = 0, rB = 0, revB = 0;
+
+    state.squad.forEach(entry => {
+      // Proposer decision
+      if (entry.proposerTurn === 'A') {
+        pA++;
+        if (entry.proposeReason) rA++;
+      } else if (entry.proposerTurn === 'B') {
+        pB++;
+        if (entry.proposeReason) rB++;
+      } else if (entry.proposerTurn === 'Both') {
+        // Disagreement consensus: both partners actively arbitrated the decision
+        pA++;
+        pB++;
+        rA++;
+        rB++;
+      }
+
+      // Reviewer decision
+      if (entry.reviewerTurn === 'A') {
+        revA++;
+        if (entry.reviewReason) rA++;
+      } else if (entry.reviewerTurn === 'B') {
+        revB++;
+        if (entry.reviewReason) rB++;
+      }
+    });
+
+    state.actionsA = {
+      proposals: pA,
+      reasons: rA,
+      reviews: revA,
+      total: pA + revA
+    };
+
+    state.actionsB = {
+      proposals: pB,
+      reasons: rB,
+      reviews: revB,
+      total: pB + revB
+    };
+  }
+
   function recordAction(actorTurn, actionType, detail, player) {
     if (actorTurn === 'A') {
-      if (actionType === 'proposal') state.actionsA.proposals++;
-      if (actionType === 'reason') state.actionsA.reasons++;
-      if (actionType === 'review') state.actionsA.reviews++;
+      if (actionType === 'proposal') { state.actionsA.proposals++; state.actionsA.reasons++; }
+      if (actionType === 'review') { state.actionsA.reviews++; state.actionsA.reasons++; }
       state.actionsA.total++;
     } else if (actorTurn === 'B') {
-      if (actionType === 'proposal') state.actionsB.proposals++;
-      if (actionType === 'reason') state.actionsB.reasons++;
-      if (actionType === 'review') state.actionsB.reviews++;
+      if (actionType === 'proposal') { state.actionsB.proposals++; state.actionsB.reasons++; }
+      if (actionType === 'review') { state.actionsB.reviews++; state.actionsB.reasons++; }
       state.actionsB.total++;
     }
 
@@ -935,6 +976,9 @@
   }
 
   function updateCollaborationDisplay() {
+    // Keep collaborative decisions strictly synchronized with the current squad state
+    recalcActionsFromSquad();
+
     const total = state.actionsA.total + state.actionsB.total;
     let pctA = 50;
     let pctB = 50;
@@ -946,8 +990,8 @@
 
     progressPartnerA.style.width = `${pctA}%`;
     progressPartnerB.style.width = `${pctB}%`;
-    labelActionsA.textContent = `${state.partnerA}: ${state.actionsA.total} actions (${pctA}%)`;
-    labelActionsB.textContent = `${state.partnerB}: ${state.actionsB.total} actions (${pctB}%)`;
+    labelActionsA.textContent = `${state.partnerA}: ${state.actionsA.total} decisions (${pctA}%)`;
+    labelActionsB.textContent = `${state.partnerB}: ${state.actionsB.total} decisions (${pctB}%)`;
 
     // Visual Status Badge
     if (total >= 4 && (pctA > 70 || pctB > 70)) {
@@ -1135,9 +1179,9 @@
     const total = state.actionsA.total + state.actionsB.total;
     const pctA = total > 0 ? Math.round((state.actionsA.total / total) * 100) : 50;
     finalCollabStats.innerHTML = `
-      <p><strong>Total Collaborative Moves:</strong> ${total} actions</p>
-      <p><strong>${state.partnerA}:</strong> ${state.actionsA.proposals} proposals, ${state.actionsA.reasons} reasons, ${state.actionsA.reviews} reviews (${pctA}% total share)</p>
-      <p><strong>${state.partnerB}:</strong> ${state.actionsB.proposals} proposals, ${state.actionsB.reasons} reasons, ${state.actionsB.reviews} reviews (${100 - pctA}% total share)</p>
+      <p><strong>Total Collaborative Decisions:</strong> ${total} decisions</p>
+      <p><strong>${state.partnerA}:</strong> ${state.actionsA.proposals} proposals, ${state.actionsA.reviews} reviews (${pctA}% decision share)</p>
+      <p><strong>${state.partnerB}:</strong> ${state.actionsB.proposals} proposals, ${state.actionsB.reviews} reviews (${100 - pctA}% decision share)</p>
     `;
 
     inputReflectA.value = state.reflections.partnerA;
