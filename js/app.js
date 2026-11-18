@@ -4,9 +4,10 @@
 (function () {
   'use strict';
 
-  // --- STATE MANAGEMENT ---
+  // --- CONSTANTS & CONFIG ---
   const STORAGE_KEY = 'cricteam_xi_state_23b3006';
 
+  // --- APP STATE ---
   let state = {
     partnerA: 'Rahul',
     partnerB: 'Meena',
@@ -14,27 +15,28 @@
     currentScreen: 'screenWelcome',
     selectedRoleFilter: 'all',
 
-    // Shared Artefact: Squad of up to 11 players
-    squad: [], // Array of picked player objects: { player, proposedBy, reason, reviewedBy, peerReview, teacherFeedback }
+    // Shared Artefact: Final & current 11-player squad
+    squad: [], // { player, proposedBy, proposeReason, reviewedBy, reviewType, reviewReason, feedbackId }
 
-    // Temporary staging for proposal & review
+    // Staging states
     pendingProposal: null, // { player, proposedBy, reason }
     pendingDisagreement: null, // { proposedPlayer, alternativePlayer }
+    pendingReviewFeedback: null, // Feedback object currently displayed
 
-    // Collaboration tracking
+    // Collaboration metrics (Design Challenge)
     actionsA: { proposals: 0, reasons: 0, reviews: 0, total: 0 },
     actionsB: { proposals: 0, reasons: 0, reviews: 0, total: 0 },
-    historyLog: [], // Full audit log of all events
+    historyLog: [], // Complete audit log of every action
 
-    // AI feedback interventions & Teacher overrides
-    feedbackInterventions: [], // { id, player, type, originalMsg, teacherOverride, status: 'pending'|'approved'|'overridden' }
+    // AI Feedback Interventions (Rule-based) & Teacher Overrides (C5)
+    feedbackInterventions: [], // { id, timestamp, player, trapType, autoText, teacherText, status: 'pending'|'approved'|'overridden' }
 
-    // Reflections
+    // Reflections & Completion
     reflections: { partnerA: '', partnerB: '' },
     isSubmitted: false
   };
 
-  // --- DOM ELEMENTS ---
+  // --- DOM REFERENCES ---
   const screens = {
     welcome: document.getElementById('screenWelcome'),
     statsCoach: document.getElementById('screenStatsCoach'),
@@ -48,20 +50,20 @@
   const turnAvatar = document.getElementById('turnAvatar');
   const turnText = document.getElementById('turnText');
 
-  // Welcome screen elements
+  // Welcome Form
   const inputPartnerA = document.getElementById('inputPartnerA');
   const inputPartnerB = document.getElementById('inputPartnerB');
   const btnStartGame = document.getElementById('btnStartGame');
   const btnResumeGame = document.getElementById('btnResumeGame');
 
-  // Stats Coach elements
+  // Stats Coach
   const btnSkipToBuild = document.getElementById('btnSkipToBuild');
   const btnProceedToBuild = document.getElementById('btnProceedToBuild');
   const qcQuestionText = document.getElementById('qcQuestionText');
   const qcOptionsContainer = document.getElementById('qcOptionsContainer');
   const qcFeedback = document.getElementById('qcFeedback');
 
-  // Team Sheet elements
+  // Team Sheet & Player Pool
   const playersGrid = document.getElementById('playersGrid');
   const roleFilters = document.getElementById('roleFilters');
   const squadList = document.getElementById('squadList');
@@ -81,7 +83,7 @@
   const collabAlertBanner = document.getElementById('collabAlertBanner');
   const teacherFeedbackBanner = document.getElementById('teacherFeedbackBanner');
 
-  // Propose Modal elements
+  // Propose Modal
   const proposeModal = document.getElementById('proposeModal');
   const modalPlayerName = document.getElementById('modalPlayerName');
   const modalPlayerStats = document.getElementById('modalPlayerStats');
@@ -91,7 +93,7 @@
   const btnCloseProposeModal = document.getElementById('btnCloseProposeModal');
   const btnConfirmPropose = document.getElementById('btnConfirmPropose');
 
-  // Peer Feedback elements
+  // Peer Feedback Screen
   const pfReviewerAvatar = document.getElementById('pfReviewerAvatar');
   const pfReviewerName = document.getElementById('pfReviewerName');
   const pfReviewerName2 = document.getElementById('pfReviewerName2');
@@ -107,7 +109,7 @@
   const pfFeedbackMsg = document.getElementById('pfFeedbackMsg');
   const btnProceedAfterFeedback = document.getElementById('btnProceedAfterFeedback');
 
-  // Disagreement elements
+  // Disagreement Screen
   const compareCardProposed = document.getElementById('compareCardProposed');
   const compareCardAlternative = document.getElementById('compareCardAlternative');
   const selectAltPlayer = document.getElementById('selectAltPlayer');
@@ -115,7 +117,7 @@
   const btnChooseAlternative = document.getElementById('btnChooseAlternative');
   const btnCancelPick = document.getElementById('btnCancelPick');
 
-  // Final Team elements
+  // Final Team Screen
   const finalBalanceAudit = document.getElementById('finalBalanceAudit');
   const finalSquadTableBody = document.getElementById('finalSquadTableBody');
   const finalCollabStats = document.getElementById('finalCollabStats');
@@ -126,7 +128,7 @@
   const btnSubmitFinalProject = document.getElementById('btnSubmitFinalProject');
   const submitSuccessNotice = document.getElementById('submitSuccessNotice');
 
-  // Teacher Modal elements
+  // Teacher View Modal
   const teacherModal = document.getElementById('teacherModal');
   const btnTeacherModal = document.getElementById('btnTeacherModal');
   const btnCloseTeacherModal = document.getElementById('btnCloseTeacherModal');
@@ -143,7 +145,7 @@
   const btnCloseTeacherDash = document.getElementById('btnCloseTeacherDash');
   const btnResetAllData = document.getElementById('btnResetAllData');
 
-  // About Modal elements
+  // About Modal
   const aboutModal = document.getElementById('aboutModal');
   const btnAboutModal = document.getElementById('btnAboutModal');
   const btnCloseAboutModal = document.getElementById('btnCloseAboutModal');
@@ -158,6 +160,9 @@
     populateReasonOptions();
     renderQuickCheckQuestion();
     renderPlayerPool();
+    updateBalanceMeters();
+    renderSquadList();
+    updateCollaborationDisplay();
   }
 
   // --- SCREEN NAVIGATION ---
@@ -194,6 +199,12 @@
     turnText.textContent = `${partnerName}'s Turn (${isPartnerA ? 'Partner A' : 'Partner B'})`;
   }
 
+  function toggleTurn() {
+    state.currentTurn = state.currentTurn === 'A' ? 'B' : 'A';
+    updateTurnHeader();
+    saveStateToStorage();
+  }
+
   // --- STATS COACH (QUICK CHECK) ---
   function renderQuickCheckQuestion() {
     qcQuestionText.textContent = QUICK_CHECK_QUESTION.question;
@@ -226,7 +237,6 @@
       qcFeedback.style.borderLeftColor = 'var(--accent-amber)';
       qcFeedback.style.background = 'var(--accent-amber-bg)';
       qcFeedback.innerHTML = `<strong>🤔 Key Concept Alert:</strong> ${opt.explanation}`;
-      // Allow re-attempting
       setTimeout(() => {
         allBtns.forEach(b => {
           b.disabled = false;
@@ -237,7 +247,7 @@
     qcFeedback.classList.remove('hidden');
   }
 
-  // --- POPULATE REASONS DROPDOWN ---
+  // --- REASONS DROPDOWN ---
   function populateReasonOptions() {
     selectReason.innerHTML = '';
     PREDEFINED_REASONS.forEach(reason => {
@@ -248,7 +258,7 @@
     });
   }
 
-  // --- RENDER PLAYER POOL ---
+  // --- RENDER AVAILABLE PLAYERS POOL ---
   function renderPlayerPool() {
     playersGrid.innerHTML = '';
     const filtered = PLAYERS.filter(p => {
@@ -329,12 +339,13 @@
   // --- PROPOSE PICK MODAL ---
   function openProposeModal(player) {
     if (state.squad.length >= 11) {
-      alert('Your 11-player squad is already full! Remove a player or check final balance.');
+      alert('Your 11-player squad is already full! Click Check & Finalise Squad.');
       return;
     }
 
     activePlayerForModal = player;
-    modalPlayerName.textContent = `Propose ${player.name} (${player.role})`;
+    const proposerName = state.currentTurn === 'A' ? state.partnerA : state.partnerB;
+    modalPlayerName.textContent = `${proposerName} is proposing ${player.name} (${player.role})`;
     modalPlayerStats.innerHTML = `
       <div class="p-3" style="background: var(--bg-card-subtle); border-radius: var(--radius-sm); font-size: 0.9rem;">
         <p><strong>Matches:</strong> ${player.matches} | <strong>Runs:</strong> ${player.runs} (Avg: ${player.batAvg}, SR: ${player.strikeRate})</p>
@@ -351,79 +362,708 @@
     activePlayerForModal = null;
   }
 
-  // --- EVENT LISTENERS INITIAL ---
-  function setupEventListeners() {
-    // Welcome Form
-    btnStartGame.onclick = () => {
-      const a = inputPartnerA.value.trim() || 'Rahul';
-      const b = inputPartnerB.value.trim() || 'Meena';
-      state.partnerA = a;
-      state.partnerB = b;
-      state.currentTurn = 'A';
-      reflectNameA.textContent = a;
-      reflectNameB.textContent = b;
-      showScreen('screenStatsCoach');
+  // --- CONFIRM PROPOSAL & PROCEED TO PEER FEEDBACK (SCREEN 4) ---
+  btnConfirmPropose.onclick = () => {
+    if (!activePlayerForModal) return;
+
+    const chosenReason = inputCustomReason.value.trim() || selectReason.value;
+    const proposerTurn = state.currentTurn;
+    const proposerName = proposerTurn === 'A' ? state.partnerA : state.partnerB;
+    const reviewerTurn = proposerTurn === 'A' ? 'B' : 'A';
+    const reviewerName = reviewerTurn === 'A' ? state.partnerA : state.partnerB;
+
+    state.pendingProposal = {
+      player: activePlayerForModal,
+      proposedBy: proposerName,
+      proposerTurn: proposerTurn,
+      proposeReason: chosenReason,
+      reviewedBy: reviewerName,
+      reviewerTurn: reviewerTurn
     };
 
-    btnResumeGame.onclick = () => {
-      loadStateFromStorage();
-      showScreen(state.currentScreen || 'screenBuildTeam');
-    };
+    // Track proposer action
+    recordAction(proposerTurn, 'proposal', `Proposed ${activePlayerForModal.name}`, activePlayerForModal);
+    recordAction(proposerTurn, 'reason', `Gave reason: "${chosenReason}"`, activePlayerForModal);
 
-    // Stats Coach Navigation
-    btnSkipToBuild.onclick = () => showScreen('screenBuildTeam');
-    btnProceedToBuild.onclick = () => showScreen('screenBuildTeam');
+    closeProposeModal();
+    setupPeerFeedbackScreen();
+    showScreen('screenPeerFeedback');
+  };
 
-    // Role Filters
-    roleFilters.addEventListener('click', (e) => {
-      if (e.target.classList.contains('pill')) {
-        roleFilters.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-        e.target.classList.add('active');
-        state.selectedRoleFilter = e.target.getAttribute('data-role');
-        renderPlayerPool();
-      }
-    });
+  // --- SCREEN 4: PEER FEEDBACK SETUP ---
+  function setupPeerFeedbackScreen() {
+    const prop = state.pendingProposal;
+    if (!prop) return;
 
-    // Propose Modal Buttons
-    btnCancelPropose.onclick = closeProposeModal;
-    btnCloseProposeModal.onclick = closeProposeModal;
+    pfReviewerAvatar.textContent = prop.reviewerTurn;
+    pfReviewerAvatar.style.background = prop.reviewerTurn === 'A' ? 'var(--partner-a-color)' : 'var(--partner-b-color)';
+    pfReviewerName.textContent = prop.reviewedBy;
+    pfReviewerName2.textContent = prop.reviewedBy;
 
-    // About Modal
-    btnAboutModal.onclick = () => aboutModal.classList.remove('hidden');
-    btnCloseAboutModal.onclick = () => aboutModal.classList.add('hidden');
-    btnCloseAboutBtn.onclick = () => aboutModal.classList.add('hidden');
+    pfProposerTag.textContent = `${prop.proposedBy} proposed:`;
+    pfProposerTag.className = `badge ${prop.proposerTurn === 'A' ? 'badge-primary' : 'badge-warning'}`;
+    pfPickNumber.textContent = state.squad.length + 1;
 
-    // Teacher View Modal
-    btnTeacherModal.onclick = () => {
-      inputTeacherPin.value = '';
-      teacherPinError.classList.add('hidden');
-      teacherAuthSection.classList.remove('hidden');
-      teacherDashboardSection.classList.add('hidden');
-      teacherModal.classList.remove('hidden');
-    };
-    btnCloseTeacherModal.onclick = () => teacherModal.classList.add('hidden');
-    btnCloseTeacherDash.onclick = () => teacherModal.classList.add('hidden');
+    const p = prop.player;
+    pfPlayerDetailCard.innerHTML = `
+      <div class="player-card-top">
+        <div>
+          <h4>${p.name}</h4>
+          <span class="role-pill ${getRoleClass(p.role)}">${p.role}</span>
+        </div>
+        <span class="badge ${p.trap ? 'badge-warning' : 'badge-success'}">${p.badge}</span>
+      </div>
+      <div class="player-stats-grid mt-2">
+        <div class="stat-cell"><span class="s-label">Matches</span><span class="s-val">${p.matches}</span></div>
+        <div class="stat-cell"><span class="s-label">Bat Avg</span><span class="s-val">${p.batAvg}</span></div>
+        <div class="stat-cell"><span class="s-label">Strike Rate</span><span class="s-val">${p.strikeRate}</span></div>
+        <div class="stat-cell"><span class="s-label">Wickets</span><span class="s-val">${p.wickets}</span></div>
+        <div class="stat-cell"><span class="s-label">Econ</span><span class="s-val">${p.economy ?? '-'}</span></div>
+        <div class="stat-cell"><span class="s-label">Catches</span><span class="s-val">${p.catches}</span></div>
+      </div>
+    `;
 
-    btnSubmitTeacherPin.onclick = () => {
-      if (inputTeacherPin.value.trim() === '1234') {
-        teacherAuthSection.classList.add('hidden');
-        teacherDashboardSection.classList.remove('hidden');
-        renderTeacherDashboard();
-      } else {
-        teacherPinError.classList.remove('hidden');
-      }
-    };
+    pfProposerReason.textContent = `"${prop.proposeReason}"`;
+    inputPeerReviewReason.value = '';
+    pfFeedbackBox.classList.add('hidden');
+    btnPeerAgree.disabled = false;
+    btnPeerNotSure.disabled = false;
+  }
 
-    // Reset button
-    btnResetAllData.onclick = () => {
-      if (confirm('Are you sure you want to clear all team picks and reset the demo?')) {
-        localStorage.removeItem(STORAGE_KEY);
-        window.location.reload();
-      }
+  // --- PEER FEEDBACK ACTIONS: AGREE vs NOT SURE ---
+  btnPeerAgree.onclick = () => {
+    const reviewerReason = inputPeerReviewReason.value.trim() || 'Agreed with partner proposal based on team balance.';
+    handlePeerDecision('agree', reviewerReason);
+  };
+
+  btnPeerNotSure.onclick = () => {
+    const reviewerReason = inputPeerReviewReason.value.trim() || 'Not sure if this player is the safest pick.';
+    handlePeerDecision('disagree', reviewerReason);
+  };
+
+  function handlePeerDecision(decisionType, reviewerReason) {
+    const prop = state.pendingProposal;
+    if (!prop) return;
+
+    // Track reviewer actions
+    recordAction(prop.reviewerTurn, 'review', `Marked ${decisionType}: "${reviewerReason}"`, prop.player);
+    recordAction(prop.reviewerTurn, 'reason', `Peer review reason: "${reviewerReason}"`, prop.player);
+
+    if (decisionType === 'agree') {
+      // Run AI feedback rules
+      const ruleFeedback = evaluateRuleBasedFeedback(prop.player, state.squad);
+
+      // Store in interventions log for Teacher view
+      const intervention = {
+        id: 'fb_' + Date.now(),
+        timestamp: new Date().toLocaleTimeString(),
+        player: prop.player,
+        trapType: ruleFeedback.trapType,
+        autoText: ruleFeedback.message,
+        teacherText: null,
+        status: 'pending' // can be approved or overridden by teacher
+      };
+      state.feedbackInterventions.unshift(intervention);
+
+      // Add to squad
+      const squadEntry = {
+        player: prop.player,
+        proposedBy: prop.proposedBy,
+        proposerTurn: prop.proposerTurn,
+        proposeReason: prop.proposeReason,
+        reviewedBy: prop.reviewedBy,
+        reviewerTurn: prop.reviewerTurn,
+        reviewType: 'Agree',
+        reviewReason: reviewerReason,
+        feedbackId: intervention.id
+      };
+      state.squad.push(squadEntry);
+
+      // Show immediate feedback to the pair
+      showRuleFeedbackToLearners(ruleFeedback, intervention.id);
+
+    } else {
+      // Disagreement triggered!
+      setupDisagreementScreen(prop, reviewerReason);
+      showScreen('screenDisagreement');
+    }
+  }
+
+  // --- AI FEEDBACK RULES (FEATURE C: M1, M2, BALANCE) ---
+  function evaluateRuleBasedFeedback(player, currentSquad) {
+    // Check M2 Trap (Small sample size)
+    if (player.id === 'P03') { // Devansh Patel (2 matches, avg 85.0)
+      return {
+        trapType: 'M2',
+        title: '⚠️ Small Sample Size Warning (Misconception M2)',
+        isWarning: true,
+        message: `Caution! Devansh has an 85.0 average, but he played ONLY 2 matches! In 2 games, one lucky day inflates stats. Can you rely on him in a high-pressure 10-match school tournament? Proven consistency over 10+ matches is far safer.`
+      };
+    }
+
+    if (player.id === 'P13') { // Varun Chawla (3 matches, econ 4.9)
+      return {
+        trapType: 'M2',
+        title: '⚠️ Small Sample Size Warning (Misconception M2)',
+        isWarning: true,
+        message: `Watch out! Varun's 4.9 economy and 8 wickets look brilliant, but he played ONLY 3 matches. Small sample sizes don't prove sustained form against diverse opposition.`
+      };
+    }
+
+    // Check M1 Trap (Totals Bias)
+    if (player.id === 'P02') { // Kabir Khan (520 runs, SR 105.2, 1 catch)
+      return {
+        trapType: 'M1',
+        title: '⚠️ Slow Strike Rate & Low Fielding (Misconception M1)',
+        isWarning: true,
+        message: `Kabir has the highest total runs (520), but his strike rate is only 105.2 and he has just 1 catch! Eating up balls at a slow pace puts huge scoreboard pressure on your other batters. Consider batters with strike rates of 125+ and sharp fielding.`
+      };
+    }
+
+    if (player.id === 'P14') { // Amitav Sen (14 matches, 14 wkts, econ 8.9)
+      return {
+        trapType: 'M1',
+        title: '⚠️ Expensive Bowling Economy (Misconception M1)',
+        isWarning: true,
+        message: `Amitav took 14 wickets, but his bowling economy is 8.9 runs per over! In school cricket, conceding 9 runs every over lets the opposition run away with the match. Look for bowlers with economy under 7.0 (like Jasbir at 5.8 or Zeeshan at 6.2).`
+      };
+    }
+
+    // Role Balance Checks
+    const currentBatters = getBattersCount(currentSquad);
+    const currentBowlers = getBowlersCount(currentSquad);
+    const currentKeepers = getKeepersCount(currentSquad);
+    const remainingSpots = 10 - currentSquad.length; // after adding this player
+
+    if (player.role === 'Wicket-Keeper' && currentKeepers >= 1) {
+      return {
+        trapType: 'ROLE_LIMIT',
+        title: '⚠️ Role Limit: Duplicate Wicket-Keeper',
+        isWarning: true,
+        message: `Your team already has a designated wicket-keeper! School rules allow only 1 keeper in the playing XI. You need remaining spots for specialized bowlers or batters.`
+      };
+    }
+
+    if (remainingSpots <= 3 && currentBowlers < 4 && player.role !== 'Bowler' && player.role !== 'All-Rounder') {
+      return {
+        trapType: 'BALANCE_BOWLER',
+        title: '⚠️ Team Balance: Bowlers Needed',
+        isWarning: true,
+        message: `Team balance alert! You have only ${remainingSpots} spots left and need at least 4 bowlers (current: ${currentBowlers}). You must prioritize bowling strength to bowl out opposing teams.`
+      };
+    }
+
+    // Positive reinforcement for solid statistical picks
+    if (player.id === 'P10') { // Jasbir Singh
+      return {
+        trapType: 'EXCELLENT',
+        title: '🌟 Elite Strike Bowler Choice!',
+        isWarning: false,
+        message: `Outstanding choice! Jasbir leads the pool with 21 wickets over 12 matches and maintains a miserly 5.8 economy rate. That is sustained excellence with proven sample size.`
+      };
+    }
+
+    if (player.id === 'P06') { // Ishan Nair
+      return {
+        trapType: 'EXCELLENT',
+        title: '🌟 Top Gloveman Selected!',
+        isWarning: false,
+        message: `Superb selection! Ishan has 14 catches and stumpings plus a dependable 31.0 average over 12 matches. Clean keeping saves 20+ runs in fielding.`
+      };
+    }
+
+    if (player.role === 'All-Rounder') {
+      return {
+        trapType: 'ALL_ROUNDER',
+        title: '🌟 Dual-Utility All-Rounder Pick!',
+        isWarning: false,
+        message: `Great tactical pick! All-rounders like ${player.name} count toward both your 4-batter and 4-bowler quotas, giving your team crucial depth in both departments.`
+      };
+    }
+
+    return {
+      trapType: 'NORMAL',
+      title: '✅ Solid Team Selection',
+      isWarning: false,
+      message: `${player.name} added to the team sheet! Their stats across ${player.matches} matches support your team's tactical structure.`
     };
   }
 
-  // --- SAVE & LOAD STORAGE ---
+  function showRuleFeedbackToLearners(ruleFeedback, interventionId) {
+    btnPeerAgree.disabled = true;
+    btnPeerNotSure.disabled = true;
+
+    pfFeedbackBox.className = `pf-feedback-box ${ruleFeedback.isWarning ? 'warning' : ''}`;
+    pfFeedbackTitle.textContent = ruleFeedback.title;
+    pfFeedbackMsg.textContent = ruleFeedback.message;
+    pfFeedbackBox.classList.remove('hidden');
+
+    btnProceedAfterFeedback.onclick = () => {
+      renderSquadList();
+      renderPlayerPool();
+      updateBalanceMeters();
+      updateCollaborationDisplay();
+      checkOneSidedCollaboration();
+      toggleTurn(); // Switch turn to the other partner
+      state.pendingProposal = null;
+      showScreen('screenBuildTeam');
+    };
+  }
+
+  // --- SCREEN 5: DISAGREEMENT RESOLUTION ---
+  function setupDisagreementScreen(prop, reviewerReason) {
+    state.pendingDisagreement = {
+      proposedPlayer: prop.player,
+      proposedBy: prop.proposedBy,
+      proposeReason: prop.proposeReason,
+      reviewedBy: prop.reviewedBy,
+      reviewReason: reviewerReason
+    };
+
+    // Render proposed player card
+    const p = prop.player;
+    compareCardProposed.innerHTML = `
+      <h4>${p.name}</h4>
+      <span class="role-pill ${getRoleClass(p.role)}">${p.role}</span>
+      <div class="player-stats-grid mt-2">
+        <div class="stat-cell"><span class="s-label">Matches</span><span class="s-val">${p.matches}</span></div>
+        <div class="stat-cell"><span class="s-label">Avg</span><span class="s-val">${p.batAvg}</span></div>
+        <div class="stat-cell"><span class="s-label">SR</span><span class="s-val">${p.strikeRate}</span></div>
+        <div class="stat-cell"><span class="s-label">Wkts</span><span class="s-val">${p.wickets}</span></div>
+        <div class="stat-cell"><span class="s-label">Econ</span><span class="s-val">${p.economy ?? '-'}</span></div>
+      </div>
+      <p class="text-muted mt-2" style="font-size: 0.85rem;"><strong>Proposed by ${prop.proposedBy}:</strong> "${prop.proposeReason}"</p>
+      <p class="text-muted" style="font-size: 0.85rem;"><strong>${prop.reviewedBy} objected:</strong> "${reviewerReason}"</p>
+    `;
+
+    // Populate alternative players dropdown (players not already picked)
+    selectAltPlayer.innerHTML = '';
+    const available = PLAYERS.filter(pl => pl.id !== p.id && !state.squad.some(s => s.player.id === pl.id));
+    available.forEach(pl => {
+      const opt = document.createElement('option');
+      opt.value = pl.id;
+      opt.textContent = `${pl.name} (${pl.role}) - ${pl.matches} matches, ${pl.role === 'Bowler' ? pl.wickets + ' wkts' : pl.runs + ' runs'}`;
+      selectAltPlayer.appendChild(opt);
+    });
+
+    selectAltPlayer.onchange = () => {
+      const selectedId = selectAltPlayer.value;
+      const altPlayer = PLAYERS.find(pl => pl.id === selectedId);
+      renderAltCompareCard(altPlayer);
+    };
+
+    if (available.length > 0) {
+      renderAltCompareCard(available[0]);
+    }
+  }
+
+  function renderAltCompareCard(alt) {
+    if (!alt) return;
+    compareCardAlternative.innerHTML = `
+      <h4>${alt.name}</h4>
+      <span class="role-pill ${getRoleClass(alt.role)}">${alt.role}</span>
+      <div class="player-stats-grid mt-2">
+        <div class="stat-cell"><span class="s-label">Matches</span><span class="s-val">${alt.matches}</span></div>
+        <div class="stat-cell"><span class="s-label">Avg</span><span class="s-val">${alt.batAvg}</span></div>
+        <div class="stat-cell"><span class="s-label">SR</span><span class="s-val">${alt.strikeRate}</span></div>
+        <div class="stat-cell"><span class="s-label">Wkts</span><span class="s-val">${alt.wickets}</span></div>
+        <div class="stat-cell"><span class="s-label">Econ</span><span class="s-val">${alt.economy ?? '-'}</span></div>
+      </div>
+      <p class="text-muted mt-2" style="font-size: 0.85rem;">${alt.desc}</p>
+    `;
+  }
+
+  // Disagreement Resolution Choices
+  btnKeepProposed.onclick = () => {
+    resolveDisputeWithPlayer(state.pendingDisagreement.proposedPlayer, 'Agreed to keep originally proposed player after discussion.');
+  };
+
+  btnChooseAlternative.onclick = () => {
+    const altPlayer = PLAYERS.find(pl => pl.id === selectAltPlayer.value);
+    if (altPlayer) {
+      resolveDisputeWithPlayer(altPlayer, 'Agreed to switch to alternative player following shared selection rule.');
+    }
+  };
+
+  btnCancelPick.onclick = () => {
+    recordAction(state.currentTurn, 'review', 'Disagreement ended in cancel: picking another player', null);
+    state.pendingProposal = null;
+    state.pendingDisagreement = null;
+    toggleTurn();
+    showScreen('screenBuildTeam');
+  };
+
+  function resolveDisputeWithPlayer(player, consensusNote) {
+    const selectedRuleRadio = document.querySelector('input[name="sharedRule"]:checked');
+    const ruleChosen = selectedRuleRadio ? selectedRuleRadio.value : 'sample';
+
+    const feedback = evaluateRuleBasedFeedback(player, state.squad);
+    const intervention = {
+      id: 'fb_' + Date.now(),
+      timestamp: new Date().toLocaleTimeString(),
+      player: player,
+      trapType: feedback.trapType,
+      autoText: `${feedback.message} (Resolved via shared rule: ${ruleChosen})`,
+      teacherText: null,
+      status: 'pending'
+    };
+    state.feedbackInterventions.unshift(intervention);
+
+    state.squad.push({
+      player: player,
+      proposedBy: `${state.partnerA} & ${state.partnerB}`,
+      proposerTurn: 'Both',
+      proposeReason: `Resolved disagreement using rule: "${ruleChosen}"`,
+      reviewedBy: 'Both',
+      reviewerTurn: 'Both',
+      reviewType: 'Consensus',
+      reviewReason: consensusNote,
+      feedbackId: intervention.id
+    });
+
+    recordAction('Both', 'review', `Consensus reached on ${player.name}: ${consensusNote}`, player);
+
+    renderSquadList();
+    renderPlayerPool();
+    updateBalanceMeters();
+    updateCollaborationDisplay();
+    checkOneSidedCollaboration();
+    toggleTurn();
+
+    state.pendingProposal = null;
+    state.pendingDisagreement = null;
+    showScreen('screenBuildTeam');
+  }
+
+  // --- SQUAD & BALANCE HELPERS ---
+  function getBattersCount(squad) {
+    return squad.filter(s => s.player.role === 'Batter' || s.player.role === 'All-Rounder').length;
+  }
+
+  function getBowlersCount(squad) {
+    return squad.filter(s => s.player.role === 'Bowler' || s.player.role === 'All-Rounder').length;
+  }
+
+  function getKeepersCount(squad) {
+    return squad.filter(s => s.player.role === 'Wicket-Keeper').length;
+  }
+
+  function updateBalanceMeters() {
+    const batters = getBattersCount(state.squad);
+    const bowlers = getBowlersCount(state.squad);
+    const keepers = getKeepersCount(state.squad);
+
+    countBatters.textContent = `${batters} / 4 min`;
+    countBowlers.textContent = `${bowlers} / 4 min`;
+    countKeepers.textContent = `${keepers} / 1`;
+
+    meterBatters.className = `balance-item ${batters >= 4 ? 'valid' : 'invalid'}`;
+    meterBowlers.className = `balance-item ${bowlers >= 4 ? 'valid' : 'invalid'}`;
+    meterKeepers.className = `balance-item ${keepers === 1 ? 'valid' : 'invalid'}`;
+
+    squadCount.textContent = state.squad.length;
+
+    // Enable finalise button if 11 picked
+    if (state.squad.length === 11) {
+      btnViewFinal.disabled = false;
+    } else {
+      btnViewFinal.disabled = true;
+    }
+  }
+
+  function renderSquadList() {
+    squadList.innerHTML = '';
+    if (state.squad.length === 0) {
+      squadList.innerHTML = '<div class="empty-squad-notice">No players picked yet. Propose your first player from the roster on the right!</div>';
+      return;
+    }
+
+    state.squad.forEach((entry, idx) => {
+      const p = entry.player;
+      const row = document.createElement('div');
+      row.className = 'squad-item-row';
+      row.innerHTML = `
+        <div class="squad-item-meta">
+          <strong>#${idx + 1}</strong>
+          <span>${p.name}</span>
+          <span class="role-pill ${getRoleClass(p.role)}">${p.role}</span>
+        </div>
+        <div style="font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 8px;">
+          <span>By <strong>${entry.proposedBy}</strong></span>
+          <button class="btn btn-outline btn-sm remove-pick-btn" title="Remove player" style="padding: 2px 6px; min-height: 24px;">✕</button>
+        </div>
+      `;
+
+      row.querySelector('.remove-pick-btn').onclick = () => {
+        if (confirm(`Remove ${p.name} from the team sheet?`)) {
+          state.squad.splice(idx, 1);
+          renderSquadList();
+          renderPlayerPool();
+          updateBalanceMeters();
+          updateCollaborationDisplay();
+          saveStateToStorage();
+        }
+      };
+
+      squadList.appendChild(row);
+    });
+  }
+
+  // --- FEATURE E: COLLABORATION SIGNALS & ANTI-MONOPOLY (DESIGN CHALLENGE) ---
+  function recordAction(actorTurn, actionType, detail, player) {
+    if (actorTurn === 'A') {
+      if (actionType === 'proposal') state.actionsA.proposals++;
+      if (actionType === 'reason') state.actionsA.reasons++;
+      if (actionType === 'review') state.actionsA.reviews++;
+      state.actionsA.total++;
+    } else if (actorTurn === 'B') {
+      if (actionType === 'proposal') state.actionsB.proposals++;
+      if (actionType === 'reason') state.actionsB.reasons++;
+      if (actionType === 'review') state.actionsB.reviews++;
+      state.actionsB.total++;
+    }
+
+    const logEntry = {
+      timestamp: new Date().toLocaleTimeString(),
+      actor: actorTurn === 'A' ? state.partnerA : (actorTurn === 'B' ? state.partnerB : 'Both'),
+      actionType,
+      detail,
+      player: player ? `${player.name} (${player.role})` : '-'
+    };
+
+    state.historyLog.unshift(logEntry);
+    saveStateToStorage();
+  }
+
+  function updateCollaborationDisplay() {
+    const total = state.actionsA.total + state.actionsB.total;
+    let pctA = 50;
+    let pctB = 50;
+
+    if (total > 0) {
+      pctA = Math.round((state.actionsA.total / total) * 100);
+      pctB = 100 - pctA;
+    }
+
+    progressPartnerA.style.width = `${pctA}%`;
+    progressPartnerB.style.width = `${pctB}%`;
+    labelActionsA.textContent = `${state.partnerA}: ${state.actionsA.total} actions (${pctA}%)`;
+    labelActionsB.textContent = `${state.partnerB}: ${state.actionsB.total} actions (${pctB}%)`;
+
+    // Visual Status Badge
+    if (total >= 4 && (pctA > 70 || pctB > 70)) {
+      collabStatusText.className = 'badge badge-warning';
+      collabStatusText.textContent = `Unequal (${pctA > 70 ? state.partnerA : state.partnerB} dominating)`;
+    } else {
+      collabStatusText.className = 'badge badge-success';
+      collabStatusText.textContent = 'Balanced Duo (50-50)';
+    }
+  }
+
+  function checkOneSidedCollaboration() {
+    const total = state.actionsA.total + state.actionsB.total;
+    if (total < 4) {
+      collabAlertBanner.classList.add('hidden');
+      return;
+    }
+
+    const pctA = Math.round((state.actionsA.total / total) * 100);
+    const pctB = 100 - pctA;
+
+    // Check dominance condition: >70% share or 0 reasons from one partner
+    if (pctA > 70 || state.actionsB.reasons === 0) {
+      collabAlertBanner.innerHTML = `
+        <span>⚠️ <strong>Fair Turns Notice:</strong> ${state.partnerA} has taken ${pctA}% of actions! ${state.partnerB}, what do you think? Please take the tablet and propose the next pick with your statistical reason.</span>
+      `;
+      collabAlertBanner.classList.remove('hidden');
+    } else if (pctB > 70 || state.actionsA.reasons === 0) {
+      collabAlertBanner.innerHTML = `
+        <span>⚠️ <strong>Fair Turns Notice:</strong> ${state.partnerB} has taken ${pctB}% of actions! ${state.partnerA}, what do you think? Please take the tablet and propose the next pick with your statistical reason.</span>
+      `;
+      collabAlertBanner.classList.remove('hidden');
+    } else {
+      collabAlertBanner.classList.add('hidden');
+    }
+  }
+
+  // --- FEATURE F: TEACHER VIEW WITH PIN 1234 & APPROVE/OVERRIDE (C5) ---
+  function renderTeacherDashboard() {
+    teacherPairNames.textContent = `${state.partnerA} & ${state.partnerB}`;
+    teacherPicksCount.textContent = `${state.squad.length} / 11`;
+
+    const totalActions = state.actionsA.total + state.actionsB.total;
+    const pctA = totalActions > 0 ? Math.round((state.actionsA.total / totalActions) * 100) : 50;
+    const isOneSided = totalActions >= 4 && (pctA > 70 || (100 - pctA) > 70 || state.actionsA.reasons === 0 || state.actionsB.reasons === 0);
+
+    teacherCollabBadge.className = `badge ${isOneSided ? 'badge-warning' : 'badge-success'}`;
+    teacherCollabBadge.textContent = isOneSided ? `⚠️ One-Sided (${pctA}% / ${100 - pctA}%)` : `Balanced (${pctA}% / ${100 - pctA}%)`;
+
+    // Render Feedback Intervention logs with Approve/Override
+    teacherFeedbackList.innerHTML = '';
+    if (state.feedbackInterventions.length === 0) {
+      teacherFeedbackList.innerHTML = '<p class="text-muted">No automated advice has been triggered yet.</p>';
+    } else {
+      state.feedbackInterventions.forEach(item => {
+        const card = document.createElement('div');
+        card.className = `teacher-feedback-card ${item.status === 'overridden' ? 'overridden' : ''}`;
+
+        card.innerHTML = `
+          <div class="flex-between">
+            <strong>${item.player.name} (${item.player.role})</strong>
+            <span class="badge ${item.status === 'overridden' ? 'badge-warning' : (item.status === 'approved' ? 'badge-success' : 'badge-secondary')}">
+              ${item.status.toUpperCase()}
+            </span>
+          </div>
+          <p style="font-size: 0.9rem; margin: 6px 0;"><strong>System Tip:</strong> ${item.autoText}</p>
+          
+          ${item.teacherText ? `<p style="font-size: 0.9rem; color: #854D0E; background: #FEF08A; padding: 6px 10px; border-radius: var(--radius-sm); margin: 6px 0;"><strong>Your Teacher Note:</strong> "${item.teacherText}"</p>` : ''}
+
+          <div class="override-edit-box">
+            <input type="text" class="override-input" placeholder="Type teacher override message..." value="${item.teacherText || ''}" style="flex: 1; min-height: 36px; font-size: 0.85rem;">
+            <button class="btn btn-warning btn-sm btn-override">Override</button>
+            <button class="btn btn-success btn-sm btn-approve">Approve AI</button>
+          </div>
+        `;
+
+        const inputOverride = card.querySelector('.override-input');
+        card.querySelector('.btn-approve').onclick = () => {
+          item.status = 'approved';
+          saveStateToStorage();
+          renderTeacherDashboard();
+          showLiveTeacherBanner(`Approved system feedback for ${item.player.name}`);
+        };
+
+        card.querySelector('.btn-override').onclick = () => {
+          const text = inputOverride.value.trim();
+          if (!text) {
+            alert('Please enter your override message first!');
+            return;
+          }
+          item.status = 'overridden';
+          item.teacherText = text;
+          saveStateToStorage();
+          renderTeacherDashboard();
+          showLiveTeacherBanner(`⭐ From your teacher: "${text}"`);
+        };
+
+        teacherFeedbackList.appendChild(card);
+      });
+    }
+
+    // Render Action Audit Log
+    teacherActionLogBody.innerHTML = '';
+    if (state.historyLog.length === 0) {
+      teacherActionLogBody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No actions recorded yet.</td></tr>';
+    } else {
+      state.historyLog.forEach(log => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${log.timestamp}</td>
+          <td><strong>${log.actor}</strong></td>
+          <td><span class="badge badge-secondary">${log.actionType}</span></td>
+          <td>${log.player}</td>
+          <td style="font-size: 0.85rem;">${log.detail}</td>
+          <td>-</td>
+        `;
+        teacherActionLogBody.appendChild(tr);
+      });
+    }
+  }
+
+  function showLiveTeacherBanner(message) {
+    teacherFeedbackBanner.innerHTML = `
+      <div class="flex-between">
+        <span>👩‍🏫 <strong>Teacher Note:</strong> ${message}</span>
+        <button class="btn-close" style="font-size: 18px;" onclick="document.getElementById('teacherFeedbackBanner').classList.add('hidden')">&times;</button>
+      </div>
+    `;
+    teacherFeedbackBanner.classList.remove('hidden');
+  }
+
+  // --- SCREEN 6: FINAL TEAM & REFLECTION ---
+  btnViewFinal.onclick = () => {
+    // Check if collaboration was one-sided before finalising
+    const totalActions = state.actionsA.total + state.actionsB.total;
+    if (state.actionsA.reasons === 0 || state.actionsB.reasons === 0) {
+      alert(`Both partners must contribute at least one reason before the team can be submitted! Please review picks together.`);
+      return;
+    }
+
+    renderFinalTeamScreen();
+    showScreen('screenFinalTeam');
+  };
+
+  function renderFinalTeamScreen() {
+    const batters = getBattersCount(state.squad);
+    const bowlers = getBowlersCount(state.squad);
+    const keepers = getKeepersCount(state.squad);
+
+    const isBattersOk = batters >= 4;
+    const isBowlersOk = bowlers >= 4;
+    const isKeepersOk = keepers === 1;
+
+    finalBalanceAudit.innerHTML = `
+      <div class="audit-card ${isBattersOk ? 'pass' : 'fail'}">
+        <strong>Batting Depth:</strong> ${batters} / 4 min (${isBattersOk ? '✓ Passed' : '✕ Needs 4'})
+      </div>
+      <div class="audit-card ${isBowlersOk ? 'pass' : 'fail'}">
+        <strong>Bowling Strength:</strong> ${bowlers} / 4 min (${isBowlersOk ? '✓ Passed' : '✕ Needs 4'})
+      </div>
+      <div class="audit-card ${isKeepersOk ? 'pass' : 'fail'}">
+        <strong>Wicket-Keeper:</strong> ${keepers} / 1 exact (${isKeepersOk ? '✓ Passed' : '✕ Must be 1'})
+      </div>
+    `;
+
+    // Render table
+    finalSquadTableBody.innerHTML = '';
+    state.squad.forEach((entry, i) => {
+      const p = entry.player;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><strong>${i + 1}</strong></td>
+        <td><strong>${p.name}</strong></td>
+        <td><span class="role-pill ${getRoleClass(p.role)}">${p.role}</span></td>
+        <td>${p.matches}</td>
+        <td>${p.runs} (${p.batAvg} / ${p.strikeRate})</td>
+        <td>${p.wickets} (${p.economy ?? '-'})</td>
+        <td>${p.catches}</td>
+        <td>${entry.proposedBy}</td>
+      `;
+      finalSquadTableBody.appendChild(tr);
+    });
+
+    // Collab stats
+    const total = state.actionsA.total + state.actionsB.total;
+    const pctA = total > 0 ? Math.round((state.actionsA.total / total) * 100) : 50;
+    finalCollabStats.innerHTML = `
+      <p><strong>Total Collaborative Moves:</strong> ${total} actions</p>
+      <p><strong>${state.partnerA}:</strong> ${state.actionsA.proposals} proposals, ${state.actionsA.reasons} reasons, ${state.actionsA.reviews} reviews (${pctA}% total share)</p>
+      <p><strong>${state.partnerB}:</strong> ${state.actionsB.proposals} proposals, ${state.actionsB.reasons} reasons, ${state.actionsB.reviews} reviews (${100 - pctA}% total share)</p>
+    `;
+
+    inputReflectA.value = state.reflections.partnerA;
+    inputReflectB.value = state.reflections.partnerB;
+  }
+
+  btnSubmitFinalProject.onclick = () => {
+    const refA = inputReflectA.value.trim();
+    const refB = inputReflectB.value.trim();
+
+    if (!refA || !refB) {
+      alert('Both partners must write a short reflection before final submission!');
+      return;
+    }
+
+    state.reflections.partnerA = refA;
+    state.reflections.partnerB = refB;
+    state.isSubmitted = true;
+    saveStateToStorage();
+
+    submitSuccessNotice.classList.remove('hidden');
+    recordAction('Both', 'review', 'Final squad and reflections submitted for teacher review', null);
+  };
+
+  // --- LOCAL STORAGE HELPERS (FEATURE G) ---
   function saveStateToStorage() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -456,7 +1096,72 @@
     }
   }
 
-  // Expose global for next features
+  // Event Listeners for Base Navigation
+  function setupEventListeners() {
+    btnStartGame.onclick = () => {
+      const a = inputPartnerA.value.trim() || 'Rahul';
+      const b = inputPartnerB.value.trim() || 'Meena';
+      state.partnerA = a;
+      state.partnerB = b;
+      state.currentTurn = 'A';
+      reflectNameA.textContent = a;
+      reflectNameB.textContent = b;
+      showScreen('screenStatsCoach');
+    };
+
+    btnResumeGame.onclick = () => {
+      loadStateFromStorage();
+      showScreen(state.currentScreen || 'screenBuildTeam');
+    };
+
+    btnSkipToBuild.onclick = () => showScreen('screenBuildTeam');
+    btnProceedToBuild.onclick = () => showScreen('screenBuildTeam');
+
+    roleFilters.addEventListener('click', (e) => {
+      if (e.target.classList.contains('pill')) {
+        roleFilters.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+        e.target.classList.add('active');
+        state.selectedRoleFilter = e.target.getAttribute('data-role');
+        renderPlayerPool();
+      }
+    });
+
+    btnCancelPropose.onclick = closeProposeModal;
+    btnCloseProposeModal.onclick = closeProposeModal;
+
+    btnAboutModal.onclick = () => aboutModal.classList.remove('hidden');
+    btnCloseAboutModal.onclick = () => aboutModal.classList.add('hidden');
+    btnCloseAboutBtn.onclick = () => aboutModal.classList.add('hidden');
+
+    btnTeacherModal.onclick = () => {
+      inputTeacherPin.value = '';
+      teacherPinError.classList.add('hidden');
+      teacherAuthSection.classList.remove('hidden');
+      teacherDashboardSection.classList.add('hidden');
+      teacherModal.classList.remove('hidden');
+    };
+    btnCloseTeacherModal.onclick = () => teacherModal.classList.add('hidden');
+    btnCloseTeacherDash.onclick = () => teacherModal.classList.add('hidden');
+
+    btnSubmitTeacherPin.onclick = () => {
+      if (inputTeacherPin.value.trim() === '1234') {
+        teacherAuthSection.classList.add('hidden');
+        teacherDashboardSection.classList.remove('hidden');
+        renderTeacherDashboard();
+      } else {
+        teacherPinError.classList.remove('hidden');
+      }
+    };
+
+    btnResetAllData.onclick = () => {
+      if (confirm('Are you sure you want to clear all team picks and reset the demo?')) {
+        localStorage.removeItem(STORAGE_KEY);
+        window.location.reload();
+      }
+    };
+  }
+
+  // Expose global
   window.CricTeamApp = {
     getState: () => state,
     showScreen,
@@ -465,7 +1170,6 @@
     loadStateFromStorage
   };
 
-  // Run initial boot
   init();
 
 })();
