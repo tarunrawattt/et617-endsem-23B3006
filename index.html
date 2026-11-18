@@ -35,6 +35,11 @@
       </div>
 
       <!-- Action buttons -->
+      <button id="btnSwitchRole" class="nav-btn nav-btn-subtle" title="Switch between Student and Teacher roles">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
+        <span>Switch Role</span>
+      </button>
+
       <button id="btnResetSession" class="nav-btn nav-btn-subtle" title="Start a fresh session with a new learner pair">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
         <span>New Pair</span>
@@ -45,18 +50,109 @@
         <span>About</span>
       </button>
 
-      <button id="btnTeacherModal" class="nav-btn nav-btn-teacher" title="Teacher Supervision (PIN 1234)">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-        <span>Teacher View</span>
-      </button>
+      <!-- Preserved ID for compatibility -->
+      <button id="btnTeacherModal" class="hidden" aria-hidden="true"></button>
     </div>
   </header>
 
   <!-- Main Container for Screens -->
   <main class="main-container">
     
+    <!-- SCREEN 0: Choose Your Role Landing Screen (Initial Entry Point) -->
+    <section id="screenRoleLanding" class="screen-view active">
+      <div class="card role-landing-container">
+        <!-- Brand Crest & Header -->
+        <div class="landing-header">
+          <div class="landing-brand-crest" aria-hidden="true">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 3v17M12 3v17M18 3v17M4 3h16" />
+              <circle cx="19.5" cy="18.5" r="2.2" fill="#B5382A" stroke="#B5382A" />
+            </svg>
+          </div>
+          <h2 class="landing-title">CRICTEAM XI</h2>
+          <p class="landing-tagline">Build the best school team, together.</p>
+          <p class="landing-subtext">Choose how you are participating today on this shared tablet:</p>
+        </div>
+
+        <!-- Two Equal-Size Choice Cards -->
+        <div class="role-cards-grid">
+          
+          <!-- Student Role Card -->
+          <div class="role-choice-card student-role-card" id="cardRoleStudent" tabindex="0" role="button" aria-label="Continue as Student">
+            <div class="role-card-top">
+              <div class="role-icon-wrap icon-student">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+              </div>
+              <span class="role-badge-tag student-tag">Learner Mode</span>
+            </div>
+            
+            <div class="role-card-body">
+              <h3 class="role-card-title">I'm a Student</h3>
+              <p class="role-card-desc">Pair up, pick players, and give your reasons.</p>
+            </div>
+            
+            <div class="role-card-footer">
+              <button id="btnRoleStudent" class="btn btn-pitch btn-lg role-action-btn">
+                <span>Continue as Student</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+
+            <!-- Resume Saved Squad Shortcut (Under Student Card) -->
+            <div id="landingResumeContainer" class="landing-resume-wrap hidden">
+              <button id="btnLandingResume" class="resume-shortcut-btn" title="Resume your in-progress squad">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+                <span>Resume saved squad (<span id="landingResumeCount">0</span>/11)</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Teacher Role Card -->
+          <div class="role-choice-card teacher-role-card" id="cardRoleTeacher">
+            <div class="role-card-top">
+              <div class="role-icon-wrap icon-teacher">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                </svg>
+              </div>
+              <span class="role-badge-tag teacher-tag">Facilitator</span>
+            </div>
+            
+            <div class="role-card-body">
+              <h3 class="role-card-title">I'm a Teacher</h3>
+              <p class="role-card-desc">See how pairs are doing and review feedback.</p>
+            </div>
+            
+            <div class="role-card-footer">
+              <button id="btnRoleTeacher" class="btn btn-sand btn-lg role-action-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <span>Continue as Teacher</span>
+              </button>
+            </div>
+
+            <!-- Inline PIN Entry Box -->
+            <div id="landingTeacherPinBox" class="landing-pin-box hidden">
+              <div class="pin-prompt-header">
+                <label for="inputLandingTeacherPin" class="pin-label">Enter 4-Digit Teacher PIN:</label>
+                <button id="btnCancelLandingPin" class="btn-close-sm" aria-label="Cancel PIN entry">&times;</button>
+              </div>
+              <div class="pin-input-row">
+                <input type="password" id="inputLandingTeacherPin" class="landing-pin-input" placeholder="••••" maxlength="4" inputmode="numeric" pattern="[0-9]*" aria-label="Teacher 4-digit PIN">
+                <button id="btnSubmitLandingPin" class="btn btn-pitch btn-sm">Enter</button>
+              </div>
+              <p id="landingPinError" class="landing-pin-error hidden">That PIN doesn't match. Try again.</p>
+              <span class="pin-demo-hint">Demo PIN: <strong>1234</strong></span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
     <!-- SCREEN 1: Welcome & Setup -->
-    <section id="screenWelcome" class="screen-view active">
+    <section id="screenWelcome" class="screen-view">
       <div class="card hero-section">
         <div class="hero-layout">
           <div class="hero-copy">
@@ -643,8 +739,13 @@
         </div>
 
         <div class="mt-4 flex-between">
-          <button id="btnResetAllData" class="btn btn-leather btn-sm">Reset Demo State</button>
-          <button id="btnCloseTeacherDash" class="btn btn-quiet">Done Supervising</button>
+          <button id="btnTeacherBackToRoles" class="btn btn-quiet btn-sm">
+            &larr; Back to Role Selection
+          </button>
+          <div style="display: flex; gap: 8px;">
+            <button id="btnResetAllData" class="btn btn-leather btn-sm">Reset Demo State</button>
+            <button id="btnCloseTeacherDash" class="btn btn-sand btn-sm">Done Supervising</button>
+          </div>
         </div>
       </div>
     </div>

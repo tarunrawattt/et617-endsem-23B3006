@@ -7,12 +7,18 @@
   // --- CONSTANTS & CONFIG ---
   const STORAGE_KEY = 'cricteam_xi_state_23b3006';
 
+  // NOTE ON ROLE SELECTOR ARCHITECTURE:
+  // In a production deployment, real authentication would require a secure backend server with
+  // HTTP-only session cookies, password hashing, and role-based access control (RBAC).
+  // For this offline-capable shared tablet educational prototype, the role selector provides a client-side simulated
+  // gateway with a demo PIN (1234) for teachers and pass-and-play scaffolding for student pairs.
+
   // --- APP STATE ---
   let state = {
     partnerA: 'Rahul',
     partnerB: 'Meena',
     currentTurn: 'A', // 'A' or 'B'
-    currentScreen: 'screenWelcome',
+    currentScreen: 'screenRoleLanding',
     selectedRoleFilter: 'all',
 
     // Shared Artefact: Final & current 11-player squad
@@ -38,6 +44,7 @@
 
   // --- DOM REFERENCES ---
   const screens = {
+    roleLanding: document.getElementById('screenRoleLanding'),
     welcome: document.getElementById('screenWelcome'),
     statsCoach: document.getElementById('screenStatsCoach'),
     buildTeam: document.getElementById('screenBuildTeam'),
@@ -45,6 +52,22 @@
     disagreement: document.getElementById('screenDisagreement'),
     finalTeam: document.getElementById('screenFinalTeam')
   };
+
+  // Role Landing Screen Elements
+  const cardRoleStudent = document.getElementById('cardRoleStudent');
+  const btnRoleStudent = document.getElementById('btnRoleStudent');
+  const landingResumeContainer = document.getElementById('landingResumeContainer');
+  const btnLandingResume = document.getElementById('btnLandingResume');
+  const landingResumeCount = document.getElementById('landingResumeCount');
+  const cardRoleTeacher = document.getElementById('cardRoleTeacher');
+  const btnRoleTeacher = document.getElementById('btnRoleTeacher');
+  const landingTeacherPinBox = document.getElementById('landingTeacherPinBox');
+  const inputLandingTeacherPin = document.getElementById('inputLandingTeacherPin');
+  const btnSubmitLandingPin = document.getElementById('btnSubmitLandingPin');
+  const btnCancelLandingPin = document.getElementById('btnCancelLandingPin');
+  const landingPinError = document.getElementById('landingPinError');
+  const btnSwitchRole = document.getElementById('btnSwitchRole');
+  const btnTeacherBackToRoles = document.getElementById('btnTeacherBackToRoles');
 
   const turnBadge = document.getElementById('turnBadge');
   const turnAvatar = document.getElementById('turnAvatar');
@@ -192,7 +215,7 @@
   }
 
   function updateTurnHeader() {
-    if (state.currentScreen === 'screenWelcome' || state.currentScreen === 'screenStatsCoach') {
+    if (state.currentScreen === 'screenRoleLanding' || state.currentScreen === 'screenWelcome' || state.currentScreen === 'screenStatsCoach') {
       turnBadge.classList.add('hidden');
       return;
     }
@@ -1154,12 +1177,104 @@
   function checkSavedState() {
     const data = localStorage.getItem(STORAGE_KEY);
     if (data) {
-      btnResumeGame.classList.remove('hidden');
+      try {
+        const parsed = JSON.parse(data);
+        btnResumeGame.classList.remove('hidden');
+        if (landingResumeContainer && landingResumeCount) {
+          landingResumeContainer.classList.remove('hidden');
+          landingResumeCount.textContent = parsed.squad ? parsed.squad.length : 0;
+        }
+      } catch (e) {
+        console.warn('Error reading saved state', e);
+      }
+    }
+  }
+
+  function handleLandingTeacherPinSubmit() {
+    if (!inputLandingTeacherPin) return;
+    const val = inputLandingTeacherPin.value.trim();
+    if (val === '1234') {
+      landingTeacherPinBox.classList.add('hidden');
+      landingPinError.classList.add('hidden');
+      inputLandingTeacherPin.value = '';
+      teacherAuthSection.classList.add('hidden');
+      teacherDashboardSection.classList.remove('hidden');
+      renderTeacherDashboard();
+      teacherModal.classList.remove('hidden');
+    } else {
+      landingPinError.classList.remove('hidden');
+      inputLandingTeacherPin.select();
     }
   }
 
   // Event Listeners for Base Navigation
   function setupEventListeners() {
+    // Role Selection Landing Screen Listeners
+    if (btnRoleStudent) {
+      btnRoleStudent.onclick = () => showScreen('screenWelcome');
+    }
+
+    if (cardRoleStudent) {
+      cardRoleStudent.onkeydown = (e) => {
+        if (e.key === 'Enter') showScreen('screenWelcome');
+      };
+    }
+
+    if (btnLandingResume) {
+      btnLandingResume.onclick = () => {
+        loadStateFromStorage();
+        showScreen(state.currentScreen && state.currentScreen !== 'screenRoleLanding' ? state.currentScreen : 'screenBuildTeam');
+      };
+    }
+
+    if (btnRoleTeacher) {
+      btnRoleTeacher.onclick = () => {
+        if (landingTeacherPinBox) {
+          landingTeacherPinBox.classList.toggle('hidden');
+          if (!landingTeacherPinBox.classList.contains('hidden')) {
+            inputLandingTeacherPin.value = '';
+            landingPinError.classList.add('hidden');
+            inputLandingTeacherPin.focus();
+          }
+        }
+      };
+    }
+
+    if (btnCancelLandingPin) {
+      btnCancelLandingPin.onclick = () => {
+        if (landingTeacherPinBox) landingTeacherPinBox.classList.add('hidden');
+        if (landingPinError) landingPinError.classList.add('hidden');
+      };
+    }
+
+    if (btnSubmitLandingPin) {
+      btnSubmitLandingPin.onclick = handleLandingTeacherPinSubmit;
+    }
+
+    if (inputLandingTeacherPin) {
+      inputLandingTeacherPin.onkeydown = (e) => {
+        if (e.key === 'Enter') {
+          handleLandingTeacherPinSubmit();
+        } else if (e.key === 'Escape') {
+          if (landingTeacherPinBox) landingTeacherPinBox.classList.add('hidden');
+          if (landingPinError) landingPinError.classList.add('hidden');
+        }
+      };
+    }
+
+    if (btnSwitchRole) {
+      btnSwitchRole.onclick = () => {
+        showScreen('screenRoleLanding');
+      };
+    }
+
+    if (btnTeacherBackToRoles) {
+      btnTeacherBackToRoles.onclick = () => {
+        teacherModal.classList.add('hidden');
+        showScreen('screenRoleLanding');
+      };
+    }
+
     btnStartGame.onclick = () => {
       const a = inputPartnerA.value.trim() || 'Rahul';
       const b = inputPartnerB.value.trim() || 'Meena';
@@ -1276,6 +1391,7 @@
 
     // Hide alerts & notifications
     btnResumeGame.classList.add('hidden');
+    if (landingResumeContainer) landingResumeContainer.classList.add('hidden');
     submitSuccessNotice.classList.add('hidden');
     collabAlertBanner.classList.add('hidden');
     teacherFeedbackBanner.classList.add('hidden');

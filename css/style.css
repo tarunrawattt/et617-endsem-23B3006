@@ -1787,6 +1787,269 @@ h2, h3, h4, .hero-title, .screen-title, .lineup-title, .pool-title {
 .max-w-750 { max-width: 750px; }
 .max-w-850 { max-width: 850px; }
 .flex-between { display: flex; justify-content: space-between; align-items: center; }
+/* ==========================================================================
+   SCREEN 0: Role Selection Landing Screen
+   ========================================================================== */
+.role-landing-container {
+  max-width: 860px;
+  margin: 16px auto;
+  text-align: center;
+  padding: 36px 28px;
+}
+
+.landing-header {
+  margin-bottom: 28px;
+}
+
+.landing-brand-crest {
+  width: 58px;
+  height: 58px;
+  border-radius: var(--radius-md);
+  background: var(--color-pitch-soft);
+  color: var(--color-pitch);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px auto;
+  box-shadow: var(--shadow-sm);
+}
+
+.landing-title {
+  font-size: 2.85rem;
+  letter-spacing: 0.05em;
+  color: var(--color-pitch);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.landing-tagline {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-leather);
+  letter-spacing: 0.02em;
+}
+
+.landing-subtext {
+  font-size: 1.05rem;
+  color: var(--color-ink-muted);
+  margin-top: 10px;
+}
+
+.role-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  margin-top: 20px;
+  text-align: left;
+}
+
+.role-choice-card {
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  padding: 26px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 250px;
+  transition: var(--transition-normal);
+  border: 2px solid transparent;
+}
+
+.student-role-card {
+  background: linear-gradient(180deg, #FFFFFF 0%, #F4FAF6 100%);
+  border-color: rgba(31, 93, 58, 0.22);
+}
+
+.student-role-card:hover, .student-role-card:focus-within {
+  border-color: var(--color-pitch);
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-3px);
+}
+
+.teacher-role-card {
+  background: linear-gradient(180deg, #FFFFFF 0%, #F5F7FA 100%);
+  border-color: rgba(100, 116, 139, 0.25);
+}
+
+.teacher-role-card:hover, .teacher-role-card:focus-within {
+  border-color: #475569;
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-3px);
+}
+
+.role-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.role-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-student {
+  background: var(--color-pitch-soft);
+  color: var(--color-pitch);
+}
+
+.icon-teacher {
+  background: #E2E8F0;
+  color: #334155;
+}
+
+.role-badge-tag {
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.student-tag {
+  background: var(--color-pitch-soft);
+  color: var(--color-pitch);
+}
+
+.teacher-tag {
+  background: #E2E8F0;
+  color: #334155;
+}
+
+.role-card-title {
+  font-size: 1.65rem;
+  color: var(--color-ink);
+  line-height: 1.15;
+  margin-bottom: 6px;
+}
+
+.role-card-desc {
+  font-size: 0.98rem;
+  color: var(--color-ink-muted);
+  line-height: 1.45;
+}
+
+.role-card-footer {
+  margin-top: 22px;
+}
+
+.role-action-btn {
+  width: 100%;
+  min-height: 52px;
+  font-size: 1.05rem;
+}
+
+/* Resume shortcut under student card */
+.landing-resume-wrap {
+  margin-top: 14px;
+  text-align: center;
+}
+
+.resume-shortcut-btn {
+  background: transparent;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-pitch);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition-fast);
+}
+
+.resume-shortcut-btn:hover {
+  text-decoration: underline;
+  background: var(--color-pitch-soft);
+}
+
+/* Inline PIN entry box */
+.landing-pin-box {
+  background: var(--bg-sand-light);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  margin-top: 14px;
+  box-shadow: var(--shadow-sm);
+}
+
+.pin-prompt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.pin-label {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.btn-close-sm {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--color-ink-muted);
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.pin-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.landing-pin-input {
+  flex: 1;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  letter-spacing: 0.3em;
+  text-align: center;
+  padding: 8px 12px;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  min-height: 44px;
+}
+
+.landing-pin-input:focus {
+  outline: none;
+  border-color: #475569;
+}
+
+.landing-pin-error {
+  color: var(--color-leather);
+  font-size: 0.84rem;
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+.pin-demo-hint {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--color-ink-muted);
+  margin-top: 6px;
+}
+
+@media (max-width: 650px) {
+  .role-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
 
 /* ==========================================================================
