@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CricTeam XI - Balanced Sports Team Selection</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Global Top Bar -->
+  <header class="app-header">
+    <div class="header-left">
+      <span class="logo-icon">🏏</span>
+      <div>
+        <h1 class="app-title">CricTeam XI</h1>
+        <p class="app-subtitle">Collaborative School Team Builder</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <!-- Turn Indicator Badge -->
+      <div id="turnBadge" class="turn-badge hidden" aria-live="polite">
+        <span id="turnAvatar" class="avatar-circle">A</span>
+        <span id="turnText">Partner A's Turn</span>
+      </div>
+      <!-- Teacher Mode Button -->
+      <button id="btnTeacherModal" class="btn btn-secondary btn-sm" title="Teacher Supervision">
+        👩‍🏫 Teacher View
+      </button>
+      <!-- About Button -->
+      <button id="btnAboutModal" class="btn btn-outline btn-sm" title="About this Project">
+        ℹ️ About
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container for Screens -->
+  <main class="main-container">
+    
+    <!-- SCREEN 1: Welcome & Setup -->
+    <section id="screenWelcome" class="screen-view active">
+      <div class="card hero-card">
+        <div class="hero-badge">🤝 Two-Player Pass & Play</div>
+        <h2>Build Your School's Dream Cricket XI!</h2>
+        <p class="lead-text">
+          Can you and your partner choose a balanced 11-player cricket team from 14 players?
+          You will take turns on this tablet, propose picks with real reasons, and review each other's ideas.
+        </p>
+
+        <div class="rules-summary-box">
+          <h3>📋 Team Rules to Win</h3>
+          <ul class="rules-list">
+            <li><strong>Squad Size:</strong> Exactly 11 players picked.</li>
+            <li><strong>Role Balance:</strong> At least 4 Batters, at least 4 Bowlers (All-rounders count for both!), and exactly 1 Wicket-Keeper.</li>
+            <li><strong>Fair Turns:</strong> Partner A and Partner B take turns proposing and reviewing picks.</li>
+            <li><strong>Give Reasons:</strong> Every pick requires a solid statistical reason.</li>
+          </ul>
+        </div>
+
+        <div class="setup-form">
+          <h3>Enter Partner Names</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="inputPartnerA">🔵 Partner A (First Picker):</label>
+              <input type="text" id="inputPartnerA" placeholder="e.g. Rahul" value="Rahul" maxlength="20">
+            </div>
+            <div class="form-group">
+              <label for="inputPartnerB">🟣 Partner B (First Reviewer):</label>
+              <input type="text" id="inputPartnerB" placeholder="e.g. Meena" value="Meena" maxlength="20">
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button id="btnStartGame" class="btn btn-primary btn-lg">🚀 Start New Team Challenge</button>
+            <button id="btnResumeGame" class="btn btn-secondary btn-lg hidden">🔄 Resume Saved Team</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 2: Learn the Stats -->
+    <section id="screenStatsCoach" class="screen-view">
+      <div class="card">
+        <div class="screen-header">
+          <div>
+            <span class="step-pill">Step 1 of 3</span>
+            <h2>📊 How to Read the Stats Like a Pro</h2>
+            <p class="subtitle">Read these 4 simple tips before you start picking players!</p>
+          </div>
+          <button id="btnSkipToBuild" class="btn btn-outline btn-sm">Skip to Team Sheet ➔</button>
+        </div>
+
+        <div class="stats-cards-grid">
+          <div class="tip-card">
+            <div class="tip-icon">🏏</div>
+            <h4>1. Total Runs vs Batting Average</h4>
+            <p><strong>Total Runs</strong> is just how many runs scored in all games. But <strong>Average</strong> tells you how many runs they score <em>each time</em> they bat! A high total might just mean they played lots of games.</p>
+          </div>
+
+          <div class="tip-card">
+            <div class="tip-icon">⚡</div>
+            <h4>2. Strike Rate (Speed)</h4>
+            <p>Runs scored per 100 balls. Strike rate <strong>130+</strong> is fast and dangerous! Strike rate <strong>105</strong> means slow scoring, which puts pressure on other batters.</p>
+          </div>
+
+          <div class="tip-card">
+            <div class="tip-icon">🎯</div>
+            <h4>3. Bowling Economy (Thriftiness)</h4>
+            <p>Average runs given per 6-ball over. An economy of <strong>under 6.5</strong> is super stingy! An economy of <strong>8.5+</strong> is expensive and leaks boundaries.</p>
+          </div>
+
+          <div class="tip-card highlight-border">
+            <div class="tip-icon">⚠️</div>
+            <h4>4. Matches Played (Sample Size Trap!)</h4>
+            <p>Beware! A player who scored 85 in <strong>only 2 matches</strong> has a huge average, but can you trust them in a tournament? <strong>10+ matches</strong> proves real reliability!</p>
+          </div>
+        </div>
+
+        <!-- Quick Check Question -->
+        <div class="quick-check-box">
+          <h3>🧠 Quick Check: Test Your Instinct!</h3>
+          <p id="qcQuestionText" class="qc-question"></p>
+          <div id="qcOptionsContainer" class="qc-options"></div>
+          <div id="qcFeedback" class="qc-feedback hidden"></div>
+        </div>
+
+        <div class="text-center mt-4">
+          <button id="btnProceedToBuild" class="btn btn-primary btn-lg" disabled>
+            ✅ Let's Build Our XI Together ➔
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 3: Build the Team Sheet (Shared Artefact) -->
+    <section id="screenBuildTeam" class="screen-view">
+      <!-- Collaboration Alert Banner (Appears if one-sided) -->
+      <div id="collabAlertBanner" class="collab-alert-banner hidden" role="alert"></div>
+
+      <!-- Teacher Feedback Banner (Appears if overridden or approved) -->
+      <div id="teacherFeedbackBanner" class="teacher-live-banner hidden" role="status"></div>
+
+      <div class="build-grid">
+        <!-- Left Column: Shared Squad XI Sheet -->
+        <div class="card squad-sheet-card">
+          <div class="squad-header">
+            <div>
+              <h3>🏏 Our Team XI (<span id="squadCount">0</span>/11)</h3>
+              <p class="subtext">Need 11 players: min 4 Batters, min 4 Bowlers, 1 Keeper</p>
+            </div>
+            <button id="btnViewFinal" class="btn btn-success btn-sm" disabled>
+              🏁 Check & Finalise Squad
+            </button>
+          </div>
+
+          <!-- Balance Meter Bar -->
+          <div class="balance-meter">
+            <div class="balance-item" id="meterBatters">
+              <span class="label">Batters:</span>
+              <span class="value" id="countBatters">0 / 4 min</span>
+            </div>
+            <div class="balance-item" id="meterBowlers">
+              <span class="label">Bowlers:</span>
+              <span class="value" id="countBowlers">0 / 4 min</span>
+            </div>
+            <div class="balance-item" id="meterKeepers">
+              <span class="label">Keepers:</span>
+              <span class="value" id="countKeepers">0 / 1</span>
+            </div>
+          </div>
+
+          <!-- Active XI Slots List -->
+          <div id="squadList" class="squad-list">
+            <div class="empty-squad-notice">No players picked yet. Propose your first player from the roster on the right!</div>
+          </div>
+
+          <!-- Collaboration Mini Tracker -->
+          <div class="collab-mini-tracker">
+            <div class="tracker-title">
+              <span>🤝 Partnership Balance</span>
+              <span id="collabStatusText" class="badge badge-success">Balanced (50-50)</span>
+            </div>
+            <div class="progress-bar-container">
+              <div id="progressPartnerA" class="progress-bar partner-a-bg" style="width: 50%;"></div>
+              <div id="progressPartnerB" class="progress-bar partner-b-bg" style="width: 50%;"></div>
+            </div>
+            <div class="tracker-labels">
+              <span id="labelActionsA">Partner A: 0 actions</span>
+              <span id="labelActionsB">Partner B: 0 actions</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: 14 Player Pool & Proposal Panel -->
+        <div class="card player-pool-card">
+          <div class="pool-header">
+            <div>
+              <h3>Available Players Pool</h3>
+              <p class="subtext">Click any player to inspect their numbers and propose a pick</p>
+            </div>
+            <!-- Role Filter Pills -->
+            <div class="role-filter-pills" id="roleFilters">
+              <button class="pill active" data-role="all">All (14)</button>
+              <button class="pill" data-role="Batter">Batters</button>
+              <button class="pill" data-role="Bowler">Bowlers</button>
+              <button class="pill" data-role="All-Rounder">All-Rounders</button>
+              <button class="pill" data-role="Wicket-Keeper">Keepers</button>
+            </div>
+          </div>
+
+          <!-- 14 Player Cards Grid -->
+          <div id="playersGrid" class="players-grid"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 4: Peer Feedback (Pass & Play Review) -->
+    <section id="screenPeerFeedback" class="screen-view">
+      <div class="card max-w-700 mx-auto">
+        <div class="pass-tablet-header">
+          <span class="avatar-circle big-avatar" id="pfReviewerAvatar">B</span>
+          <div>
+            <div class="turn-callout">📱 Pass Tablet to <strong id="pfReviewerName">Partner B</strong></div>
+            <h2>Peer Review: Evaluate This Proposed Pick</h2>
+          </div>
+        </div>
+
+        <div class="proposal-summary-box">
+          <div class="proposal-meta">
+            <span id="pfProposerTag" class="badge">Rahul proposed:</span>
+            <span class="text-muted">Player Pick #<span id="pfPickNumber">1</span></span>
+          </div>
+
+          <div id="pfPlayerDetailCard" class="proposed-player-card"></div>
+
+          <div class="proposer-reason-box">
+            <label>💬 Their Stated Reason:</label>
+            <p id="pfProposerReason" class="reason-quote">"Consistently scores runs at a healthy average."</p>
+          </div>
+        </div>
+
+        <!-- Reviewer Decision Form -->
+        <div class="peer-decision-form">
+          <h3>What do you think, <span id="pfReviewerName2">Partner B</span>?</h3>
+          <div class="decision-buttons">
+            <button id="btnPeerAgree" class="btn btn-success btn-lg">
+              ✅ Agree & Add to Team
+            </button>
+            <button id="btnPeerNotSure" class="btn btn-warning btn-lg">
+              🤔 Not Sure / Disagree
+            </button>
+          </div>
+
+          <div class="form-group mt-3">
+            <label for="inputPeerReviewReason">Explain your view to your partner (required):</label>
+            <input type="text" id="inputPeerReviewReason" placeholder="e.g. I agree because their economy is tight, or Devansh only played 2 matches!" required>
+          </div>
+
+          <!-- Immediate Feedback Dialog Box -->
+          <div id="pfFeedbackBox" class="pf-feedback-box hidden" aria-live="polite">
+            <div id="pfFeedbackTitle" class="feedback-title">💡 Statistical Feedback</div>
+            <p id="pfFeedbackMsg" class="feedback-msg"></p>
+            <div class="mt-3 text-right">
+              <button id="btnProceedAfterFeedback" class="btn btn-primary">
+                Continue to Team Sheet ➔
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 5: Disagreement Resolution -->
+    <section id="screenDisagreement" class="screen-view">
+      <div class="card max-w-850 mx-auto">
+        <div class="disagreement-banner">
+          <span class="disagree-icon">⚖️</span>
+          <div>
+            <h2>Resolve Disagreement Together</h2>
+            <p class="subtitle">Partners disagree on this pick! Compare stats side by side and choose a shared rule.</p>
+          </div>
+        </div>
+
+        <div class="side-by-side-grid">
+          <!-- Proposed Player -->
+          <div class="card player-compare-col" id="compareColProposed">
+            <h4 class="col-heading proposed-heading">Proposed Player</h4>
+            <div id="compareCardProposed"></div>
+          </div>
+
+          <!-- Suggested Alternative Player -->
+          <div class="card player-compare-col" id="compareColAlternative">
+            <h4 class="col-heading alt-heading">Compare With Alternative</h4>
+            <div class="form-group">
+              <label for="selectAltPlayer">Select player to compare:</label>
+              <select id="selectAltPlayer" class="form-select"></select>
+            </div>
+            <div id="compareCardAlternative"></div>
+          </div>
+        </div>
+
+        <!-- Shared Rule Negotiation -->
+        <div class="consensus-box">
+          <h3>🤝 Step: Agree on ONE Shared Selection Rule</h3>
+          <p class="subtext">Which principle should settle this decision?</p>
+          <div class="shared-rules-grid">
+            <label class="rule-radio-label">
+              <input type="radio" name="sharedRule" value="sample" checked>
+              <span><strong>Sample Size First:</strong> Prioritise proven consistency over 10+ matches rather than 2-3 flash performances.</span>
+            </label>
+            <label class="rule-radio-label">
+              <input type="radio" name="sharedRule" value="balance">
+              <span><strong>Team Balance First:</strong> Ensure we don't fall short of 4 bowlers or 4 batters before luxury picks.</span>
+            </label>
+            <label class="rule-radio-label">
+              <input type="radio" name="sharedRule" value="efficiency">
+              <span><strong>Efficiency Over Totals:</strong> Value economy under 6.5 and strike rate 125+ over raw counting totals.</span>
+            </label>
+          </div>
+
+          <div class="final-dispute-choice">
+            <label>Final Consensus Choice:</label>
+            <div class="choice-buttons">
+              <button id="btnKeepProposed" class="btn btn-primary">Keep Proposed Player</button>
+              <button id="btnChooseAlternative" class="btn btn-secondary">Switch to Alternative Player</button>
+              <button id="btnCancelPick" class="btn btn-outline">Cancel Pick & Choose Another</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 6: Final Team & Reflection -->
+    <section id="screenFinalTeam" class="screen-view">
+      <div class="card max-w-850 mx-auto">
+        <div class="final-hero-header">
+          <span class="trophy-icon">🏆</span>
+          <div>
+            <h2>Congratulations! Your XI is Complete!</h2>
+            <p class="subtitle">Review your team balance, partnership stats, and write your joint reflections.</p>
+          </div>
+        </div>
+
+        <!-- Balance Audit Card -->
+        <div class="balance-audit-box">
+          <h3>📋 Team Balance Audit</h3>
+          <div class="audit-grid" id="finalBalanceAudit"></div>
+        </div>
+
+        <!-- Final XI Roster Table -->
+        <div class="final-squad-summary">
+          <h3>Official Starting XI</h3>
+          <div class="table-responsive">
+            <table class="final-table" id="finalSquadTable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Player</th>
+                  <th>Role</th>
+                  <th>Matches</th>
+                  <th>Runs (Avg / SR)</th>
+                  <th>Wkts (Econ)</th>
+                  <th>Catches</th>
+                  <th>Proposed By</th>
+                </tr>
+              </thead>
+              <tbody id="finalSquadTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Collaboration Health Summary -->
+        <div class="final-collab-summary">
+          <h3>🤝 Partnership Report</h3>
+          <div id="finalCollabStats" class="final-collab-details"></div>
+        </div>
+
+        <!-- Joint Reflection Prompts -->
+        <div class="reflection-box">
+          <h3>📝 Final Reflection (Required by both partners)</h3>
+          
+          <div class="form-group">
+            <label for="inputReflectA">🔵 <strong id="reflectNameA">Partner A</strong>: Which stat (Average, Strike Rate, Economy, or Matches) surprised you most, and why?</label>
+            <textarea id="inputReflectA" rows="3" placeholder="e.g. I realized Kabir had 520 runs but his strike rate was too slow for our team..." required></textarea>
+          </div>
+
+          <div class="form-group mt-3">
+            <label for="inputReflectB">🟣 <strong id="reflectNameB">Partner B</strong>: How did you and your partner resolve a disagreement when picking a player?</label>
+            <textarea id="inputReflectB" rows="3" placeholder="e.g. When we disagreed on Devansh, we checked his matches played and agreed 2 was too risky..." required></textarea>
+          </div>
+
+          <div class="mt-4 text-center">
+            <button id="btnSubmitFinalProject" class="btn btn-success btn-lg">
+              🎓 Submit Team to Teacher
+            </button>
+            <div id="submitSuccessNotice" class="submit-success-notice hidden">
+              🎉 <strong>Submitted!</strong> Call your teacher or click "Teacher View" in the top bar to inspect your team.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: Propose Pick Dialog -->
+  <div id="proposeModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modalPlayerName">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalPlayerName">Propose Player</h3>
+        <button id="btnCloseProposeModal" class="btn-close" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="modalPlayerStats" class="modal-player-stats"></div>
+        
+        <div class="form-group mt-3">
+          <label for="selectReason">Select a reason for this pick (required):</label>
+          <select id="selectReason" class="form-select"></select>
+        </div>
+
+        <div class="form-group mt-2">
+          <label for="inputCustomReason">Or write your own explanation:</label>
+          <input type="text" id="inputCustomReason" placeholder="e.g. Best wicketkeeper with 14 catches to prevent dropped catches">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btnCancelPropose" class="btn btn-outline">Cancel</button>
+        <button id="btnConfirmPropose" class="btn btn-primary">Submit Pick for Peer Review ➔</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Teacher Supervision (PIN: 1234) -->
+  <div id="teacherModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="teacherModalTitle">
+    <div class="modal-content max-w-850">
+      <div class="modal-header teacher-modal-header">
+        <div>
+          <h3 id="teacherModalTitle">👩‍🏫 Teacher-in-the-Loop Supervision Dashboard</h3>
+          <p class="modal-subtitle">Monitor pair collaboration, inspect picks, and approve or override AI feedback</p>
+        </div>
+        <button id="btnCloseTeacherModal" class="btn-close" aria-label="Close dialog">&times;</button>
+      </div>
+
+      <!-- PIN Auth Box (if not logged in) -->
+      <div id="teacherAuthSection" class="teacher-auth-box">
+        <h4>🔒 Enter Teacher PIN to Access</h4>
+        <p class="subtext">Demo PIN is: <strong>1234</strong> (shared device limitation stated honestly)</p>
+        <div class="pin-entry-row">
+          <input type="password" id="inputTeacherPin" placeholder="Enter PIN" maxlength="4">
+          <button id="btnSubmitTeacherPin" class="btn btn-primary">Unlock Dashboard</button>
+        </div>
+        <p id="teacherPinError" class="error-text hidden">Incorrect PIN. Try 1234.</p>
+      </div>
+
+      <!-- Teacher Dashboard Content (visible after PIN) -->
+      <div id="teacherDashboardSection" class="teacher-dashboard-body hidden">
+        <!-- Live Pair Overview -->
+        <div class="teacher-stats-strip">
+          <div class="teacher-stat-card">
+            <span class="label">Learner Pair:</span>
+            <strong id="teacherPairNames">Rahul & Meena</strong>
+          </div>
+          <div class="teacher-stat-card">
+            <span class="label">Picks Completed:</span>
+            <strong id="teacherPicksCount">0 / 11</strong>
+          </div>
+          <div class="teacher-stat-card">
+            <span class="label">Collaboration Balance:</span>
+            <span id="teacherCollabBadge" class="badge badge-success">Balanced</span>
+          </div>
+        </div>
+
+        <!-- AI Feedback Logs with Approve / Override Controls -->
+        <div class="teacher-feedback-logs-section">
+          <h4>🤖 AI Feedback Interventions & Teacher Controls</h4>
+          <p class="subtext">
+            For each feedback tip given to learners, you can <strong>Approve</strong> it or <strong>Override</strong> it with your own words.
+            Overridden advice will appear directly on the learners' tablet with a <em>"⭐ From your teacher"</em> gold banner.
+          </p>
+
+          <div id="teacherFeedbackList" class="teacher-feedback-list">
+            <p class="text-muted">No automated feedback has been triggered yet. As the pair picks players, advice logs will appear here.</p>
+          </div>
+        </div>
+
+        <!-- Full Pair Action Log Table -->
+        <div class="teacher-actions-section mt-4">
+          <h4>📜 Action & Decision Audit Trail</h4>
+          <div class="table-responsive">
+            <table class="final-table">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Actor</th>
+                  <th>Action</th>
+                  <th>Player</th>
+                  <th>Reason / Review</th>
+                  <th>Rule Flag</th>
+                </tr>
+              </thead>
+              <tbody id="teacherActionLogBody">
+                <tr><td colspan="6" class="text-center text-muted">No actions recorded yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="mt-4 flex-between">
+          <button id="btnResetAllData" class="btn btn-danger btn-sm">⚠️ Clear All & Reset Demo</button>
+          <button id="btnCloseTeacherDash" class="btn btn-secondary">Done Supervising</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: About Screen -->
+  <div id="aboutModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+    <div class="modal-content max-w-700">
+      <div class="modal-header">
+        <h3 id="aboutTitle">About CricTeam XI</h3>
+        <button id="btnCloseAboutModal" class="btn-close" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="modal-body about-body">
+        <div class="about-card-badge">Roll No: <strong>23B3006</strong> | ET 617 End-Sem</div>
+        <p><strong>CricTeam XI</strong> is an instructional application designed for collaborative problem-solving on shared tablets.</p>
+        
+        <h4>Card Alignment</h4>
+        <ul>
+          <li><strong>P6 (Collaborative Problem Solving):</strong> Supports shared artefact (Team Sheet), explicit reasoning, peer feedback reviews, and structured resolution of disagreements.</li>
+          <li><strong>T10 (Sports Team Selection):</strong> Real, curated cricket statistics challenging statistical misconceptions (totals bias M1, sample size outlier M2, and role balance).</li>
+          <li><strong>L2 (First-Gen Urban Learner):</strong> Pass-and-play turn taking for shared tablets in NGO after-school centers; simple conversational English; low bandwidth; no login required.</li>
+          <li><strong>C5 (Teacher-in-the-Loop):</strong> PIN-protected supervision dashboard allowing facilitators to audit collaboration equity and Approve or Override rule-based AI feedback messages.</li>
+        </ul>
+
+        <h4>Design Challenge Answer</h4>
+        <p>The system tracks individual actions, reasons, and peer reviews per partner. If one partner's share exceeds 70% or one has 0 reasons, the app visibly flags the imbalance, prompts the quieter partner by name, gates final submission, and notifies the facilitator.</p>
+      </div>
+      <div class="modal-footer">
+        <button id="btnCloseAboutBtn" class="btn btn-primary">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Persistent Footer with Candidate ID -->
+  <footer class="app-footer">
+    <div class="footer-content">
+      <span>ET 617 End-Sem Project | Student ID: <strong>23B3006</strong></span>
+      <span class="footer-dot">•</span>
+      <span>Card: P6-T10-L2-C5</span>
+      <span class="footer-dot">•</span>
+      <span>Pass-and-Play Shared Tablet Mode</span>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
