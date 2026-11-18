@@ -145,6 +145,10 @@
   const btnCloseTeacherDash = document.getElementById('btnCloseTeacherDash');
   const btnResetAllData = document.getElementById('btnResetAllData');
 
+  // New Pair / Reset Buttons
+  const btnResetSession = document.getElementById('btnResetSession');
+  const btnAssessNextPair = document.getElementById('btnAssessNextPair');
+
   // About Modal
   const aboutModal = document.getElementById('aboutModal');
   const btnAboutModal = document.getElementById('btnAboutModal');
@@ -1154,11 +1158,89 @@
     };
 
     btnResetAllData.onclick = () => {
-      if (confirm('Are you sure you want to clear all team picks and reset the demo?')) {
-        localStorage.removeItem(STORAGE_KEY);
-        window.location.reload();
-      }
+      resetForNewPair(true);
     };
+
+    if (btnResetSession) {
+      btnResetSession.onclick = () => {
+        resetForNewPair(state.squad.length > 0);
+      };
+    }
+
+    if (btnAssessNextPair) {
+      btnAssessNextPair.onclick = () => {
+        resetForNewPair(false);
+      };
+    }
+  }
+
+  // --- SEAMLESS RESET FOR NEW INDIVIDUALS (NO RELOAD NEEDED) ---
+  function resetForNewPair(promptConfirm = true) {
+    if (promptConfirm) {
+      const confirmMsg = 'Start a fresh session to assess a new pair of learners? This will reset the squad and partnership stats.';
+      if (!confirm(confirmMsg)) {
+        return;
+      }
+    }
+
+    // Wipe persistent storage cleanly
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (e) {
+      console.warn('Storage clear error', e);
+    }
+
+    // Reset internal state in-memory
+    state.partnerA = 'Rahul';
+    state.partnerB = 'Meena';
+    state.currentTurn = 'A';
+    state.currentScreen = 'screenWelcome';
+    state.selectedRoleFilter = 'all';
+    state.squad = [];
+    state.pendingProposal = null;
+    state.pendingDisagreement = null;
+    state.pendingReviewFeedback = null;
+    state.actionsA = { proposals: 0, reasons: 0, reviews: 0, total: 0 };
+    state.actionsB = { proposals: 0, reasons: 0, reviews: 0, total: 0 };
+    state.historyLog = [];
+    state.feedbackInterventions = [];
+    state.reflections = { partnerA: '', partnerB: '' };
+    state.isSubmitted = false;
+
+    // Reset input fields for new learners
+    inputPartnerA.value = '';
+    inputPartnerB.value = '';
+    inputPartnerA.placeholder = 'e.g. Partner A name';
+    inputPartnerB.placeholder = 'e.g. Partner B name';
+
+    inputReflectA.value = '';
+    inputReflectB.value = '';
+
+    // Hide alerts & notifications
+    btnResumeGame.classList.add('hidden');
+    submitSuccessNotice.classList.add('hidden');
+    collabAlertBanner.classList.add('hidden');
+    teacherFeedbackBanner.classList.add('hidden');
+    teacherModal.classList.add('hidden');
+    aboutModal.classList.add('hidden');
+    proposeModal.classList.add('hidden');
+
+    // Reset filter active pill
+    roleFilters.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    const defaultAllPill = roleFilters.querySelector('[data-role="all"]');
+    if (defaultAllPill) defaultAllPill.classList.add('active');
+
+    // Refresh UI components
+    renderPlayerPool();
+    renderSquadList();
+    updateBalanceMeters();
+    updateCollaborationDisplay();
+    renderQuickCheckQuestion();
+    btnProceedToBuild.disabled = true;
+
+    // Transition smoothly to Welcome Screen
+    showScreen('screenWelcome');
+    inputPartnerA.focus();
   }
 
   // Expose global

@@ -22,6 +22,10 @@
         <span id="turnAvatar" class="avatar-circle">A</span>
         <span id="turnText">Partner A's Turn</span>
       </div>
+      <!-- New Pair / Reset Button (Assess New Individuals) -->
+      <button id="btnResetSession" class="btn btn-outline btn-sm" title="Start with a fresh pair of learners">
+        🔄 New Pair / Reset
+      </button>
       <!-- Teacher Mode Button -->
       <button id="btnTeacherModal" class="btn btn-secondary btn-sm" title="Teacher Supervision">
         👩‍🏫 Teacher View
@@ -393,7 +397,12 @@
               🎓 Submit Team to Teacher
             </button>
             <div id="submitSuccessNotice" class="submit-success-notice hidden">
-              🎉 <strong>Submitted!</strong> Call your teacher or click "Teacher View" in the top bar to inspect your team.
+              <p>🎉 <strong>Submitted!</strong> Call your teacher or click "Teacher View" in the top bar to inspect your team.</p>
+              <div class="mt-3">
+                <button id="btnAssessNextPair" class="btn btn-primary">
+                  👥 Assess Next Learner Pair (Reset)
+                </button>
+              </div>
             </div>
           </div>
         </div>
