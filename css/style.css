@@ -1044,10 +1044,12 @@ h2, h3, h4, .hero-title, .screen-title, .lineup-title, .pool-title {
 .players-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
+  grid-auto-rows: max-content;
+  gap: 18px;
   max-height: 640px;
   overflow-y: auto;
   padding-right: 4px;
+  padding-bottom: 8px;
 }
 
 /* Player Trading Card */
@@ -1061,7 +1063,8 @@ h2, h3, h4, .hero-title, .screen-title, .lineup-title, .pool-title {
   flex-direction: column;
   justify-content: space-between;
   cursor: pointer;
-  min-height: 180px;
+  height: auto;
+  min-height: fit-content;
   transition: var(--transition-fast);
   position: relative;
 }
