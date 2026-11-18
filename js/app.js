@@ -49,6 +49,9 @@
   const turnBadge = document.getElementById('turnBadge');
   const turnAvatar = document.getElementById('turnAvatar');
   const turnText = document.getElementById('turnText');
+  const turnStripAvatar = document.getElementById('turnStripAvatar');
+  const turnStripLabel = document.getElementById('turnStripLabel');
+  const squadFillMeter = document.getElementById('squadFillMeter');
 
   // Welcome Form
   const inputPartnerA = document.getElementById('inputPartnerA');
@@ -201,6 +204,34 @@
     turnBadge.className = `turn-badge ${isPartnerA ? 'partner-a' : 'partner-b'}`;
     turnAvatar.textContent = isPartnerA ? 'A' : 'B';
     turnText.textContent = `${partnerName}'s Turn (${isPartnerA ? 'Partner A' : 'Partner B'})`;
+
+    // Synchronize Scoreboard Turn Strip on Screen 3
+    if (turnStripAvatar) {
+      turnStripAvatar.textContent = isPartnerA ? 'A' : 'B';
+      turnStripAvatar.style.background = isPartnerA ? 'var(--partner-a-color)' : 'var(--partner-b-color)';
+    }
+    if (turnStripLabel) {
+      turnStripLabel.textContent = `${partnerName} (${isPartnerA ? 'Partner A' : 'Partner B'}) is proposing a pick`;
+    }
+    if (squadFillMeter) {
+      const pct = Math.round((state.squad.length / 11) * 100);
+      squadFillMeter.style.width = `${pct}%`;
+    }
+  }
+
+  function getRoleSvg(role) {
+    switch (role) {
+      case 'Batter':
+        return `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m4 20 10-10m0 0 2-2 4 4-2 2m-4-4-8 8-2 2-2-2 2-2Z"/></svg>`;
+      case 'Bowler':
+        return `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/></svg>`;
+      case 'All-Rounder':
+        return `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m16 3 4 4-4 4M20 7H4M8 21l-4-4 4-4M4 17h16"/></svg>`;
+      case 'Wicket-Keeper':
+        return `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 18V9a2 2 0 0 1 2-2h1V4a2 2 0 0 1 4 0v3h1a2 2 0 0 1 2 2v9a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4Z"/></svg>`;
+      default:
+        return '';
+    }
   }
 
   function toggleTurn() {
@@ -231,16 +262,16 @@
     if (opt.isCorrect) {
       selectedBtn.classList.add('selected-correct');
       qcFeedback.className = 'qc-feedback';
-      qcFeedback.style.borderLeftColor = 'var(--color-success)';
+      qcFeedback.style.borderLeftColor = 'var(--color-pitch)';
       qcFeedback.style.background = 'var(--color-success-bg)';
-      qcFeedback.innerHTML = `<strong>🌟 Brilliant deduction!</strong> ${opt.explanation}`;
+      qcFeedback.innerHTML = `<strong>Accurate deduction!</strong> ${opt.explanation}`;
       btnProceedToBuild.disabled = false;
     } else {
       selectedBtn.classList.add('selected-wrong');
       qcFeedback.className = 'qc-feedback';
-      qcFeedback.style.borderLeftColor = 'var(--accent-amber)';
-      qcFeedback.style.background = 'var(--accent-amber-bg)';
-      qcFeedback.innerHTML = `<strong>🤔 Key Concept Alert:</strong> ${opt.explanation}`;
+      qcFeedback.style.borderLeftColor = 'var(--color-leather)';
+      qcFeedback.style.background = 'var(--color-warning-bg)';
+      qcFeedback.innerHTML = `<strong>Key Concept Note:</strong> ${opt.explanation}`;
       setTimeout(() => {
         allBtns.forEach(b => {
           b.disabled = false;
@@ -276,20 +307,31 @@
       card.className = `player-card ${isAlreadyPicked ? 'picked' : ''}`;
 
       const roleBadgeClass = getRoleClass(player.role);
+      const isSmallSample = player.matches <= 3;
 
       card.innerHTML = `
         <div class="player-card-top">
           <div>
             <div class="player-name">${player.name}</div>
-            <span class="role-pill ${roleBadgeClass}">${player.role}</span>
+            <span class="role-pill ${roleBadgeClass}">
+              ${getRoleSvg(player.role)}
+              <span>${player.role}</span>
+            </span>
           </div>
           <span class="badge ${player.trap ? 'badge-warning' : 'badge-success'}">${player.badge}</span>
         </div>
 
+        ${isSmallSample ? `
+          <div class="sample-trap-chip">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span>Sample Trap: Only ${player.matches} Matches</span>
+          </div>
+        ` : ''}
+
         <div class="player-stats-grid">
           <div class="stat-cell">
             <span class="s-label">Matches</span>
-            <span class="s-val ${player.matches <= 3 ? 'text-danger' : ''}">${player.matches}</span>
+            <span class="s-val ${isSmallSample ? 'text-danger' : ''}">${player.matches}</span>
           </div>
           <div class="stat-cell">
             <span class="s-label">Bat Avg</span>
@@ -313,12 +355,13 @@
           </div>
         </div>
 
-        <div class="text-muted" style="font-size: 0.8rem; margin: 4px 0;">
-          🧤 Catches: <strong>${player.catches}</strong>
+        <div class="catches-tag">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18V9a2 2 0 0 1 2-2h1V4a2 2 0 0 1 4 0v3h1a2 2 0 0 1 2 2v9a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4Z"/></svg>
+          <span>Catches: <strong>${player.catches}</strong></span>
         </div>
 
-        <button class="btn btn-primary btn-sm player-card-btn" ${isAlreadyPicked ? 'disabled' : ''}>
-          ${isAlreadyPicked ? '✓ In Team Sheet' : 'Propose This Player'}
+        <button class="btn ${isAlreadyPicked ? 'btn-sand' : 'btn-pitch'} btn-sm player-card-btn" ${isAlreadyPicked ? 'disabled' : ''}>
+          ${isAlreadyPicked ? '✓ In Team Sheet' : 'Propose Player'}
         </button>
       `;
 
@@ -412,13 +455,13 @@
     pfPlayerDetailCard.innerHTML = `
       <div class="player-card-top">
         <div>
-          <h4>${p.name}</h4>
-          <span class="role-pill ${getRoleClass(p.role)}">${p.role}</span>
+          <h4 style="font-family: var(--font-display); font-size: 1.35rem; color: var(--color-ink);">${p.name}</h4>
+          <span class="role-pill ${getRoleClass(p.role)}">${getRoleSvg(p.role)} <span>${p.role}</span></span>
         </div>
         <span class="badge ${p.trap ? 'badge-warning' : 'badge-success'}">${p.badge}</span>
       </div>
       <div class="player-stats-grid mt-2">
-        <div class="stat-cell"><span class="s-label">Matches</span><span class="s-val">${p.matches}</span></div>
+        <div class="stat-cell"><span class="s-label">Matches</span><span class="s-val ${p.matches <= 3 ? 'text-danger' : ''}">${p.matches}</span></div>
         <div class="stat-cell"><span class="s-label">Bat Avg</span><span class="s-val">${p.batAvg}</span></div>
         <div class="stat-cell"><span class="s-label">Strike Rate</span><span class="s-val">${p.strikeRate}</span></div>
         <div class="stat-cell"><span class="s-label">Wickets</span><span class="s-val">${p.wickets}</span></div>
@@ -499,7 +542,7 @@
     if (player.id === 'P03') { // Devansh Patel (2 matches, avg 85.0)
       return {
         trapType: 'M2',
-        title: '⚠️ Small Sample Size Warning (Misconception M2)',
+        title: 'Small Sample Size Warning (Misconception M2)',
         isWarning: true,
         message: `Caution! Devansh has an 85.0 average, but he played ONLY 2 matches! In 2 games, one lucky day inflates stats. Can you rely on him in a high-pressure 10-match school tournament? Proven consistency over 10+ matches is far safer.`
       };
@@ -508,7 +551,7 @@
     if (player.id === 'P13') { // Varun Chawla (3 matches, econ 4.9)
       return {
         trapType: 'M2',
-        title: '⚠️ Small Sample Size Warning (Misconception M2)',
+        title: 'Small Sample Size Warning (Misconception M2)',
         isWarning: true,
         message: `Watch out! Varun's 4.9 economy and 8 wickets look brilliant, but he played ONLY 3 matches. Small sample sizes don't prove sustained form against diverse opposition.`
       };
@@ -518,7 +561,7 @@
     if (player.id === 'P02') { // Kabir Khan (520 runs, SR 105.2, 1 catch)
       return {
         trapType: 'M1',
-        title: '⚠️ Slow Strike Rate & Low Fielding (Misconception M1)',
+        title: 'Slow Strike Rate & Low Fielding (Misconception M1)',
         isWarning: true,
         message: `Kabir has the highest total runs (520), but his strike rate is only 105.2 and he has just 1 catch! Eating up balls at a slow pace puts huge scoreboard pressure on your other batters. Consider batters with strike rates of 125+ and sharp fielding.`
       };
@@ -527,7 +570,7 @@
     if (player.id === 'P14') { // Amitav Sen (14 matches, 14 wkts, econ 8.9)
       return {
         trapType: 'M1',
-        title: '⚠️ Expensive Bowling Economy (Misconception M1)',
+        title: 'Expensive Bowling Economy (Misconception M1)',
         isWarning: true,
         message: `Amitav took 14 wickets, but his bowling economy is 8.9 runs per over! In school cricket, conceding 9 runs every over lets the opposition run away with the match. Look for bowlers with economy under 7.0 (like Jasbir at 5.8 or Zeeshan at 6.2).`
       };
@@ -542,7 +585,7 @@
     if (player.role === 'Wicket-Keeper' && currentKeepers >= 1) {
       return {
         trapType: 'ROLE_LIMIT',
-        title: '⚠️ Role Limit: Duplicate Wicket-Keeper',
+        title: 'Role Limit: Duplicate Wicket-Keeper',
         isWarning: true,
         message: `Your team already has a designated wicket-keeper! School rules allow only 1 keeper in the playing XI. You need remaining spots for specialized bowlers or batters.`
       };
@@ -551,7 +594,7 @@
     if (remainingSpots <= 3 && currentBowlers < 4 && player.role !== 'Bowler' && player.role !== 'All-Rounder') {
       return {
         trapType: 'BALANCE_BOWLER',
-        title: '⚠️ Team Balance: Bowlers Needed',
+        title: 'Team Balance: Bowlers Needed',
         isWarning: true,
         message: `Team balance alert! You have only ${remainingSpots} spots left and need at least 4 bowlers (current: ${currentBowlers}). You must prioritize bowling strength to bowl out opposing teams.`
       };
@@ -561,7 +604,7 @@
     if (player.id === 'P10') { // Jasbir Singh
       return {
         trapType: 'EXCELLENT',
-        title: '🌟 Elite Strike Bowler Choice!',
+        title: 'Elite Strike Bowler Selected',
         isWarning: false,
         message: `Outstanding choice! Jasbir leads the pool with 21 wickets over 12 matches and maintains a miserly 5.8 economy rate. That is sustained excellence with proven sample size.`
       };
@@ -570,7 +613,7 @@
     if (player.id === 'P06') { // Ishan Nair
       return {
         trapType: 'EXCELLENT',
-        title: '🌟 Top Gloveman Selected!',
+        title: 'Top Gloveman Selected',
         isWarning: false,
         message: `Superb selection! Ishan has 14 catches and stumpings plus a dependable 31.0 average over 12 matches. Clean keeping saves 20+ runs in fielding.`
       };
@@ -579,7 +622,7 @@
     if (player.role === 'All-Rounder') {
       return {
         trapType: 'ALL_ROUNDER',
-        title: '🌟 Dual-Utility All-Rounder Pick!',
+        title: 'Dual-Utility All-Rounder Pick',
         isWarning: false,
         message: `Great tactical pick! All-rounders like ${player.name} count toward both your 4-batter and 4-bowler quotas, giving your team crucial depth in both departments.`
       };
@@ -587,7 +630,7 @@
 
     return {
       trapType: 'NORMAL',
-      title: '✅ Solid Team Selection',
+      title: 'Balanced Squad Selection',
       isWarning: false,
       message: `${player.name} added to the team sheet! Their stats across ${player.matches} matches support your team's tactical structure.`
     };
@@ -597,7 +640,7 @@
     btnPeerAgree.disabled = true;
     btnPeerNotSure.disabled = true;
 
-    pfFeedbackBox.className = `pf-feedback-box ${ruleFeedback.isWarning ? 'warning' : ''}`;
+    pfFeedbackBox.className = `coach-note-card pf-feedback-box ${ruleFeedback.isWarning ? 'warning' : ''}`;
     pfFeedbackTitle.textContent = ruleFeedback.title;
     pfFeedbackMsg.textContent = ruleFeedback.message;
     pfFeedbackBox.classList.remove('hidden');
@@ -627,17 +670,17 @@
     // Render proposed player card
     const p = prop.player;
     compareCardProposed.innerHTML = `
-      <h4>${p.name}</h4>
-      <span class="role-pill ${getRoleClass(p.role)}">${p.role}</span>
+      <h4 style="font-family: var(--font-display); font-size: 1.35rem; color: var(--color-ink);">${p.name}</h4>
+      <span class="role-pill ${getRoleClass(p.role)}">${getRoleSvg(p.role)} <span>${p.role}</span></span>
       <div class="player-stats-grid mt-2">
-        <div class="stat-cell"><span class="s-label">Matches</span><span class="s-val">${p.matches}</span></div>
+        <div class="stat-cell"><span class="s-label">Matches</span><span class="s-val ${p.matches <= 3 ? 'text-danger' : ''}">${p.matches}</span></div>
         <div class="stat-cell"><span class="s-label">Avg</span><span class="s-val">${p.batAvg}</span></div>
         <div class="stat-cell"><span class="s-label">SR</span><span class="s-val">${p.strikeRate}</span></div>
         <div class="stat-cell"><span class="s-label">Wkts</span><span class="s-val">${p.wickets}</span></div>
         <div class="stat-cell"><span class="s-label">Econ</span><span class="s-val">${p.economy ?? '-'}</span></div>
       </div>
-      <p class="text-muted mt-2" style="font-size: 0.85rem;"><strong>Proposed by ${prop.proposedBy}:</strong> "${prop.proposeReason}"</p>
-      <p class="text-muted" style="font-size: 0.85rem;"><strong>${prop.reviewedBy} objected:</strong> "${reviewerReason}"</p>
+      <p class="text-muted mt-2" style="font-size: 0.88rem;"><strong>Proposed by ${prop.proposedBy}:</strong> &ldquo;${prop.proposeReason}&rdquo;</p>
+      <p class="text-muted" style="font-size: 0.88rem;"><strong>${prop.reviewedBy} challenged:</strong> &ldquo;${reviewerReason}&rdquo;</p>
     `;
 
     // Populate alternative players dropdown (players not already picked)
@@ -664,16 +707,16 @@
   function renderAltCompareCard(alt) {
     if (!alt) return;
     compareCardAlternative.innerHTML = `
-      <h4>${alt.name}</h4>
-      <span class="role-pill ${getRoleClass(alt.role)}">${alt.role}</span>
+      <h4 style="font-family: var(--font-display); font-size: 1.35rem; color: var(--color-ink);">${alt.name}</h4>
+      <span class="role-pill ${getRoleClass(alt.role)}">${getRoleSvg(alt.role)} <span>${alt.role}</span></span>
       <div class="player-stats-grid mt-2">
-        <div class="stat-cell"><span class="s-label">Matches</span><span class="s-val">${alt.matches}</span></div>
+        <div class="stat-cell"><span class="s-label">Matches</span><span class="s-val ${alt.matches <= 3 ? 'text-danger' : ''}">${alt.matches}</span></div>
         <div class="stat-cell"><span class="s-label">Avg</span><span class="s-val">${alt.batAvg}</span></div>
         <div class="stat-cell"><span class="s-label">SR</span><span class="s-val">${alt.strikeRate}</span></div>
         <div class="stat-cell"><span class="s-label">Wkts</span><span class="s-val">${alt.wickets}</span></div>
         <div class="stat-cell"><span class="s-label">Econ</span><span class="s-val">${alt.economy ?? '-'}</span></div>
       </div>
-      <p class="text-muted mt-2" style="font-size: 0.85rem;">${alt.desc}</p>
+      <p class="text-muted mt-2" style="font-size: 0.88rem;">${alt.desc}</p>
     `;
   }
 
@@ -761,9 +804,9 @@
     countBowlers.textContent = `${bowlers} / 4 min`;
     countKeepers.textContent = `${keepers} / 1`;
 
-    meterBatters.className = `balance-item ${batters >= 4 ? 'valid' : 'invalid'}`;
-    meterBowlers.className = `balance-item ${bowlers >= 4 ? 'valid' : 'invalid'}`;
-    meterKeepers.className = `balance-item ${keepers === 1 ? 'valid' : 'invalid'}`;
+    meterBatters.className = `balance-chip balance-item ${batters >= 4 ? 'valid' : 'invalid'}`;
+    meterBowlers.className = `balance-chip balance-item ${bowlers >= 4 ? 'valid' : 'invalid'}`;
+    meterKeepers.className = `balance-chip balance-item ${keepers === 1 ? 'valid' : 'invalid'}`;
 
     squadCount.textContent = state.squad.length;
 
@@ -773,12 +816,22 @@
     } else {
       btnViewFinal.disabled = true;
     }
+
+    if (squadFillMeter) {
+      const pct = Math.round((state.squad.length / 11) * 100);
+      squadFillMeter.style.width = `${pct}%`;
+    }
   }
 
   function renderSquadList() {
     squadList.innerHTML = '';
     if (state.squad.length === 0) {
-      squadList.innerHTML = '<div class="empty-squad-notice">No players picked yet. Propose your first player from the roster on the right!</div>';
+      squadList.innerHTML = `
+        <div class="empty-squad-notice">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/></svg>
+          <p>Squad is empty. Tap any player card on the right to propose your first selection!</p>
+        </div>
+      `;
       return;
     }
 
@@ -788,13 +841,17 @@
       row.className = 'squad-item-row';
       row.innerHTML = `
         <div class="squad-item-meta">
-          <strong>#${idx + 1}</strong>
-          <span>${p.name}</span>
-          <span class="role-pill ${getRoleClass(p.role)}">${p.role}</span>
+          <span class="squad-slot-num">#${idx + 1}</span>
+          <div>
+            <div class="squad-player-name">${p.name}</div>
+            <span class="role-pill ${getRoleClass(p.role)}">${getRoleSvg(p.role)} <span>${p.role}</span></span>
+          </div>
         </div>
-        <div style="font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 8px;">
+        <div style="font-size: 0.8rem; color: var(--color-ink-muted); display: flex; align-items: center; gap: 8px;">
           <span>By <strong>${entry.proposedBy}</strong></span>
-          <button class="btn btn-outline btn-sm remove-pick-btn" title="Remove player" style="padding: 2px 6px; min-height: 24px;">✕</button>
+          <button class="btn btn-quiet btn-sm remove-pick-btn" title="Remove player" style="padding: 2px 6px; min-height: 28px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
         </div>
       `;
 
@@ -805,6 +862,7 @@
           renderPlayerPool();
           updateBalanceMeters();
           updateCollaborationDisplay();
+          updateTurnHeader();
           saveStateToStorage();
         }
       };
@@ -877,12 +935,12 @@
     // Check dominance condition: >70% share or 0 reasons from one partner
     if (pctA > 70 || state.actionsB.reasons === 0) {
       collabAlertBanner.innerHTML = `
-        <span>⚠️ <strong>Fair Turns Notice:</strong> ${state.partnerA} has taken ${pctA}% of actions! ${state.partnerB}, what do you think? Please take the tablet and propose the next pick with your statistical reason.</span>
+        <span><strong>Fair Turns Notice:</strong> ${state.partnerA} has taken ${pctA}% of actions. ${state.partnerB}, what do you think? Please take the tablet and propose the next pick with your statistical reason.</span>
       `;
       collabAlertBanner.classList.remove('hidden');
     } else if (pctB > 70 || state.actionsA.reasons === 0) {
       collabAlertBanner.innerHTML = `
-        <span>⚠️ <strong>Fair Turns Notice:</strong> ${state.partnerB} has taken ${pctB}% of actions! ${state.partnerA}, what do you think? Please take the tablet and propose the next pick with your statistical reason.</span>
+        <span><strong>Fair Turns Notice:</strong> ${state.partnerB} has taken ${pctB}% of actions. ${state.partnerA}, what do you think? Please take the tablet and propose the next pick with your statistical reason.</span>
       `;
       collabAlertBanner.classList.remove('hidden');
     } else {
@@ -900,7 +958,7 @@
     const isOneSided = totalActions >= 4 && (pctA > 70 || (100 - pctA) > 70 || state.actionsA.reasons === 0 || state.actionsB.reasons === 0);
 
     teacherCollabBadge.className = `badge ${isOneSided ? 'badge-warning' : 'badge-success'}`;
-    teacherCollabBadge.textContent = isOneSided ? `⚠️ One-Sided (${pctA}% / ${100 - pctA}%)` : `Balanced (${pctA}% / ${100 - pctA}%)`;
+    teacherCollabBadge.textContent = isOneSided ? `One-Sided (${pctA}% / ${100 - pctA}%)` : `Balanced (${pctA}% / ${100 - pctA}%)`;
 
     // Render Feedback Intervention logs with Approve/Override
     teacherFeedbackList.innerHTML = '';
@@ -924,8 +982,8 @@
 
           <div class="override-edit-box">
             <input type="text" class="override-input" placeholder="Type teacher override message..." value="${item.teacherText || ''}" style="flex: 1; min-height: 36px; font-size: 0.85rem;">
-            <button class="btn btn-warning btn-sm btn-override">Override</button>
-            <button class="btn btn-success btn-sm btn-approve">Approve AI</button>
+            <button class="btn btn-leather btn-sm btn-override">Override</button>
+            <button class="btn btn-pitch btn-sm btn-approve">Approve AI</button>
           </div>
         `;
 
@@ -947,7 +1005,7 @@
           item.teacherText = text;
           saveStateToStorage();
           renderTeacherDashboard();
-          showLiveTeacherBanner(`⭐ From your teacher: "${text}"`);
+          showLiveTeacherBanner(`From your teacher: "${text}"`);
         };
 
         teacherFeedbackList.appendChild(card);
@@ -977,7 +1035,7 @@
   function showLiveTeacherBanner(message) {
     teacherFeedbackBanner.innerHTML = `
       <div class="flex-between">
-        <span>👩‍🏫 <strong>Teacher Note:</strong> ${message}</span>
+        <span><strong>Teacher Note:</strong> ${message}</span>
         <button class="btn-close" style="font-size: 18px;" onclick="document.getElementById('teacherFeedbackBanner').classList.add('hidden')">&times;</button>
       </div>
     `;
