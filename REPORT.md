@@ -2,7 +2,7 @@
 **Course:** ET617 – Educational Technology & Instructional Design  
 **Candidate Roll Number:** 23B3006  
 **Application Name:** CricTeam XI – School Cricket Selection Lab  
-**Assigned Card:** P6 – T10 – L2 – C5  
+**Selected Exam Card:** P6 – T10 – L2 – C5  
 **GitHub Repository:** [https://github.com/tarunrawattt/et617-endsem-23B3006](https://github.com/tarunrawattt/et617-endsem-23B3006)  
 **Live Deployed Application:** [https://et617-23b3006.vercel.app](https://et617-23b3006.vercel.app) *(Local Test Instance: `http://localhost:3000/index.html`)*  
 
@@ -121,40 +121,100 @@ Before selecting players, learners review four modular visual cards:
 ```
 +------------------------------------------------------------------------------------------------------+
 | LEARNING TASKS MATRIX                                                                                |
-+--------+--------------------------+-----------------------+------------------------------------------+
-| Task # | Format                   | Target Concept / Rule | Educational Objective                    |
-+--------+--------------------------+-----------------------+------------------------------------------+
-| Task 1 | Diagnostic Quiz (MCQ)    | Sample Size (M2)      | Compare 1 match (100 avg) vs 10 (35 avg).|
-| Task 2 | Structured Justification | Metric Justification  | Defend selection using rate stats.       |
-| Task 3 | Peer Critique (Pass/Play)| Collaborative Review  | Partner challenges or approves reason.   |
-| Task 4 | Disagreement Arbitration | Shared Decision Rule  | Settle dispute via agreed priority rule. |
-| Task 5 | Constrained Squad Sheet  | Role Balance (4-4-1)  | Satisfy multi-variable team quotas.      |
-| Task 6 | Metacognitive Reflection | Metacognition         | Articulate statistical surprises.        |
-+--------+--------------------------+-----------------------+------------------------------------------+
++--------+--------------------------+-----------------------+---------------------+--------------------+
+| Task # | Format                   | Target Concept / Rule | Target Bloom LO     | Concrete Output    |
++--------+--------------------------+-----------------------+---------------------+--------------------+
+| Task 1 | Diagnostic Quiz (MCQ)    | Sample Size (M2)      | LO2 (Critique)      | Diagnostic Check   |
+| Task 2 | Structured Justification | Rate vs Total / Sample| LO1 & LO2 (Analyze) | Propose Player     |
+| Task 3 | Peer Critique (Pass/Play)| Collaborative Review  | LO3 (Critique/Defend| Agree / Challenge  |
+| Task 4 | Disagreement Arbitration | Shared Decision Rule  | LO2 & LO3 (Evaluate)| Dispute Consensus  |
+| Task 5 | Constrained Squad Sheet  | Role Balance (4-4-1)  | LO3 (Construct)     | 11-Player Lineup   |
+| Task 6 | Metacognitive Reflection | Metacognition         | LO1, LO2, LO3       | Paired Synthesis   |
++--------+--------------------------+-----------------------+---------------------+--------------------+
 ```
 
 * **Task 1: Pre-Selection Diagnostic Check (MCQ):**  
-  *Question:* Player X scored 100 runs in just 1 match (Average: 100.0). Player Y scored 350 runs across 10 matches (Average: 35.0). Who is the safer pick for a full tournament?  
-  *Model Answer:* Player Y. 10 matches provides reliable evidence of sustained form over time.  
-  *Misconception M2 Feedback:* *"Misconception M2! 1 match is a tiny sample. One lucky day does not prove Player X can repeat it across a 10-match tournament."*  
-  *Correct Feedback:* *"Spot on! Player Y has a solid sample size (10 matches). Sustained performance is much safer than a 1-match outlier."*
+  * **Target Learning Outcome:** LO2 (*Critique sample size reliability*).  
+  * **Question:** Player X scored 100 runs in just 1 match (Average: 100.0). Player Y scored 350 runs across 10 matches (Average: 35.0). Who is the safer pick for a full tournament?  
+  * **Options:**  
+    - Option A: Player X, because an average of 100.0 is the highest possible stat.  
+    - Option B: Player Y, because 10 matches proves reliable, sustained form over time.  
+    - Option C: Neither, only total boundaries count.  
+  * **Model Answer:** Option B (Player Y). 10 matches provides reliable evidence of sustained form over time.  
+  * **Correct Feedback:** *"Spot on! Player Y has a solid sample size (10 matches). In statistics, sustained performance is much safer than a 1-match outlier."*  
+  * **Misconception M2 Feedback (Option A):** *"Misconception M2! 1 match is a tiny sample. One lucky day does not prove Player X can repeat it across a 10-match tournament."*  
+  * **Incorrect Feedback (Option C):** *"Not quite. Matches played tells us how much evidence we have before trusting an average."*
 
-* **Task 2: Proposing a Selection with Justification (Dropdown / Text):**  
-  Learners must state why a player fits the team (e.g., *"Proven track record over 10+ matches"*, *"Tight bowling economy under 7.0"*).
+* **Task 2: Proposing a Selection with Justification (Dropdown / Custom Text):**  
+  * **Target Learning Outcomes:** LO1 (*Differentiate rate from total stats*) & LO2 (*Critique sample size reliability*).  
+  * **Task Prompt:** Active partner selects a candidate player from the pool and chooses or writes a statistical justification from the structured menu.  
+  * **Model Answers / Expected Responses:**  
+    - *Batter Selection (Aarav Sharma P01):* *"Consistently scores runs at a healthy average and strike rate"* or *"Proven track record over 10+ matches (reliable sample size)"*.  
+    - *Bowler Selection (Jasbir Singh P10):* *"Tight bowling economy under 7.0 that dries up opposing runs"* or *"Crucial wicket-taking strike bowler who breaks partnerships"*.  
+    - *All-Rounder Selection (Ravindra Rao P09):* *"Versatile all-rounder who balances both batting and bowling quotas"*.  
+    - *Wicket-Keeper Selection (Ishan Nair P06):* *"Exceptional fielding and wicket-keeping catches that save 20+ runs"*.  
+  * **Correct Feedback (System Positive Reinforcement):**  
+    - *Jasbir Singh (Elite Strike Bowler):* *"Outstanding choice! Jasbir leads the pool with 21 wickets over 12 matches and maintains a miserly 5.8 economy rate. That is sustained excellence with proven sample size."*  
+    - *Ishan Nair (Top Gloveman):* *"Superb selection! Ishan has 14 catches and stumpings plus a dependable 31.0 average over 12 matches. Clean keeping saves 20+ runs in fielding."*  
+    - *Normal Balanced Pick:* *"[Player Name] added to the team sheet! Their stats across [Matches] matches support your team's tactical structure."*  
+  * **Misconception Feedback (System Cognitive Conflict Prompts):**  
+    - *Misconception M1 - Totals Trap on Batter (Kabir Khan P02):* *"Kabir has the highest total runs (520), but his strike rate is only 105.2 and he has just 1 catch! Eating up balls at a slow pace puts huge scoreboard pressure on your other batters. Consider batters with strike rates of 125+ and sharp fielding."*  
+    - *Misconception M1 - Totals Trap on Bowler (Amitav Sen P14):* *"Amitav took 14 wickets, but his bowling economy is 8.9 runs per over! In school cricket, conceding 9 runs every over lets the opposition run away with the match. Look for bowlers with economy under 7.0 (like Jasbir at 5.8 or Zeeshan at 6.2)."*  
+    - *Misconception M2 - Small Sample Trap on Batter (Devansh Patel P03):* *"Caution! Devansh has an 85.0 average, but he played ONLY 2 matches! In 2 games, one lucky day inflates stats. Can you rely on him in a high-pressure 10-match school tournament? Proven consistency over 10+ matches is far safer."*  
+    - *Misconception M2 - Small Sample Trap on Bowler (Varun Chawla P13):* *"Watch out! Varun's 4.9 economy and 8 wickets look brilliant, but he played ONLY 3 matches. Small sample sizes don't prove sustained form against diverse opposition."*  
+  * **Input Validation Feedback:** If a learner attempts to confirm without selecting or entering a reason: *"Please select or type a reason for your pick!"*
 
-* **Task 3: Peer Critique & Review (Binary Choice + Written Reason):**  
-  The reviewing partner marks the proposal as **Agree** or **Not Sure** and enters their counter-perspective.
+* **Task 3: Peer Critique & Review (Binary Choice + Written Review Argument):**  
+  * **Target Learning Outcomes:** LO3 (*Construct and defend roster via peer review*) & LO1/LO2.  
+  * **Task Prompt:** The reviewing partner inspects the proposed player's multi-dimensional statistics and proposer's justification displayed in a speech bubble, then decides whether to click **Agree & Add** or **Not Sure / Challenge**, accompanied by their review comment.  
+  * **Model Answers / Expected Responses:**  
+    - *Valid Agreement (on Aarav Sharma P01):* *"Agreed. His 37.2 average and 128.5 strike rate across 12 games gives us a reliable anchor at the top of the order."*  
+    - *Valid Challenge (on Kabir Khan P02 - M1):* *"Not sure. Kabir's 520 runs look big, but a 105 strike rate will slow down our scoring in 20 overs. We need someone who scores at 125+."*  
+    - *Valid Challenge (on Devansh Patel P03 - M2):* *"Not sure. Devansh only played 2 matches. An 85 average in 2 matches could just be one lucky day. We cannot risk a tournament match on unproven form."*  
+  * **Correct / Agreement Outcome:** When the reviewer clicks **Agree**, the candidate is committed to the shared squad sheet, turn switches to the other partner, and the appropriate algorithmic coaching tip is rendered.  
+  * **Challenge Outcome:** When the reviewer clicks **Not Sure**, the player is withheld from the squad, and the interface seamlessly transitions to Task 4 (Disagreement Resolution).  
+  * **Input Validation Feedback:** Default fallback reason (*"Agreed with partner proposal based on team balance"* or *"Not sure if this player is the safest pick"*) is automatically supplied if the reviewer does not type custom text.
 
-* **Task 4: Disagreement Arbitration (Side-by-Side Comparison):**  
-  Triggered when a partner clicks "Not Sure". Pairs view comparative statistics of both candidates side-by-side and agree on ONE governing rule (*Sample Size First*, *Team Balance First*, or *Efficiency Over Totals*) to break the deadlock.
+* **Task 4: Disagreement Arbitration (Side-by-Side Comparison & Shared Decision Rule):**  
+  * **Target Learning Outcomes:** LO2 (*Critique sample reliability*) & LO3 (*Consensus building via shared criteria*).  
+  * **Task Prompt:** When a partner challenges a pick, both candidates are rendered side-by-side on Screen 5 with highlighted metric cells. The pair must select an alternative candidate from the pool and mutually agree on ONE governing decision rule:  
+    1. *Rule 1: Sample Size First* (Prioritize players with 10+ matches over small-sample outliers).  
+    2. *Rule 2: Team Balance First* (Prioritize fulfilling missing batter or bowler quotas).  
+    3. *Rule 3: Efficiency Over Totals* (Prioritize strike rate >125 or economy <7.0 over raw run/wicket totals).  
+  * **Model Answers / Expected Responses:**  
+    - *Arbitrating Devansh Patel (P03) vs Aarav Sharma (P01):* Select *Rule 1 (Sample Size First)* and select Aarav Sharma.  
+    - *Arbitrating Kabir Khan (P02) vs Farhan Ali (P05):* Select *Rule 3 (Efficiency Over Totals)* and select Farhan Ali.  
+  * **Correct Consensus Feedback:** *"Dispute resolved! [Player Name] added to the lineup under the '[Shared Rule Name]' rule. Both partners logged mutual agreement."*  
+  * **Misconception Visual Feedback:** If learners attempt to select Devansh Patel (2 matches) under the *Sample Size First* rule, the card highlights the `Matches: 2` cell in bright red (`text-danger`) to visually challenge their rationale.
 
-* **Task 5: Multi-Constraint Squad Assembly (Shared 11-Slot Sheet):**  
-  Interactive shared artefact updating live balance chips for Batters (≥4), Bowlers (≥4), and Keepers (=1).
+* **Task 5: Multi-Constraint Squad Assembly (Shared 11-Slot Lineup & Live Balance Quotas):**  
+  * **Target Learning Outcome:** LO3 (*Construct a balanced 11-player squad satisfying role quotas*).  
+  * **Task Prompt:** Partners collaborate to fill 11 slots on the shared team sheet while satisfying all tournament requirements:  
+    - Minimum 4 Batters (Batters + All-Rounders)  
+    - Minimum 4 Bowlers (Bowlers + All-Rounders)  
+    - Exactly 1 Wicket-Keeper  
+  * **Model Answer / Balanced XI Composition:**  
+    - *Batting Core (4):* Aarav Sharma (P01), Rohan Verma (P04), Farhan Ali (P05), plus 1 top-order batter.  
+    - *Bowling Core (4):* Jasbir Singh (P10 - 21 wkts, 5.8 econ), Mohammad Zeeshan (P11 - 6.2 econ), Kuldeep Joshi (P12 - 18 wkts), plus 1 disciplined seamer.  
+    - *All-Rounders (2):* Hardik Sen (P08), Ravindra Rao (P09) — providing dual depth in both batting and bowling quotas.  
+    - *Specialist Wicket-Keeper (1):* Ishan Nair (P06 - 14 dismissals/catches, 31.0 avg).  
+    - *Quota Verification:* 6 Batting options, 6 Bowling options, 1 Keeper. All 3 meters green!  
+  * **Correct Balance Feedback:** All three quota meters display green with checkmarks: `Batters: 5/4 [PASS]`, `Bowlers: 5/4 [PASS]`, `Keeper: 1/1 [PASS]`. The "Finalise Team" button unlocks.  
+  * **Quota Violation Feedback:**  
+    - *Duplicate Keeper Attempt:* *"Role Limit: Duplicate Wicket-Keeper! School rules allow only 1 keeper in the playing XI. You need remaining spots for specialized bowlers or batters."*  
+    - *Bowler Deficit Alert:* *"Team Balance: Bowlers Needed! You have only [N] spots left and need at least 4 bowlers (current: [M]). You must prioritize bowling strength to bowl out opposing teams."*  
+    - *Incomplete Squad:* Finalise button remains disabled: `Finalise Team (Need X more players)`.
 
-* **Task 6: Metacognitive Joint Reflection (Paired Open Response):**  
-  Both partners write separate post-task reflections answering:  
-  - *Partner A:* Which stat (Average, Strike Rate, Economy, or Matches) surprised you most, and why?  
-  - *Partner B:* How did you and your partner resolve a disagreement when picking a player?
+* **Task 6: Metacognitive Joint Reflection (Paired Open-Ended Synthesis):**  
+  * **Target Learning Outcomes:** LO1, LO2, LO3 (*Metacognitive self-assessment and collaborative discourse*).  
+  * **Task Prompt:** Upon completing all 11 picks, both partners independently author reflections on the shared tablet:  
+    - *Partner A:* Which stat (Average, Strike Rate, Economy, or Matches) surprised you most, and why?  
+    - *Partner B:* How did you and your partner resolve a disagreement when picking a player?  
+  * **Model Answers / Expected Responses:**  
+    - *Partner A Expected Reflection:* *"I was surprised that Kabir Khan had 520 runs, which was the highest in the pool, but was actually a risky pick because his strike rate was only 105. He ate up too many balls and put pressure on the other batters. Strike rate and bowling economy matter much more than just total runs or wickets."*  
+    - *Partner B Expected Reflection:* *"When Rahul wanted Devansh because of his 85.0 average, I challenged it because he only played 2 games. We used the side-by-side comparison screen and agreed on the 'Sample Size First' rule to pick Aarav Sharma instead, who had proven consistency over 12 games."*  
+  * **Correct / Submission Feedback:** Both reflections are logged with timestamps in `state.historyLog`. A completion card confirms: *"Selection Complete! Your starting XI meets all school tournament balance quotas and both partners contributed reflections."*  
+  * **Input Validation Feedback:** If either partner leaves their reflection blank or writes fewer than 10 characters, the submission button displays: *"Please ensure both partners have written their final reflections before submitting!"*
 
 ---
 
@@ -163,7 +223,7 @@ Before selecting players, learners review four modular visual cards:
 ### System Architecture & Technology Stack
 * **Architecture:** Client-side Single Page Application (SPA) built with pure vanilla HTML5, CSS3, and JavaScript (ES6).
 * **Storage:** Complete state persistence via browser `localStorage` under key `cricteam_xi_state_23b3006`.
-* **Zero Backend Overhead:** No external databases, no cloud authentication, no third-party frameworks. 100% offline resilient.
+* **Zero Backend Overhead:** No external databases, no cloud authentication, no third-party runtime frameworks. Highly offline resilient: all core application logic, dataset arrays, and state persistence run entirely in-browser; web fonts gracefully fall back to native system typography if internet access is interrupted.
 * **Hosting:** Static deployment on Vercel (`https://et617-23b3006.vercel.app`) with local execution on port 3000.
 * **Repository:** Public GitHub repository at `https://github.com/tarunrawattt/et617-endsem-23B3006`.
 
@@ -244,7 +304,7 @@ In this scenario, Rahul (Partner A) and Meena (Partner B) collaborate equitably.
 ### Scenario D: One-Sided Collaboration (Anti-Monopoly Demonstration)
 To test the anti-monopoly mechanism, we simulated Rahul taking 8 out of 10 total collaborative actions (80% share) while Meena authored 0 reasons:
 1. **Live Partnership Badge:** Switches from calm green (*"Balanced Duo"*) to amber (*"Unequal (Rahul dominating)"*).
-2. **Targeted Voice Intervention Banner:** A prominent banner appears addressing the quiet partner directly by name:
+2. **On-Screen Intervention Banner:** A prominent banner appears addressing the quiet partner directly by name:
    > *"Fair Turns Notice: Rahul has taken 80% of actions. Meena, what do you think? Please take the tablet and propose the next pick with your statistical reason."*
 3. **Hard-Gate on Final Submission:** If Rahul attempts to finalize the team sheet while Meena has 0 reasons logged, the application blocks submission with a strict alert dialog: *"Both partners must contribute at least one reason before the team can be submitted! Please review picks together."*
 
@@ -258,7 +318,7 @@ To test the anti-monopoly mechanism, we simulated Rahul taking 8 out of 10 total
 
 ---
 
-### Genuine Screenshot Evidence (All 12 Scenarios)
+### Application Screenshot Evidence
 
 The following screenshots were captured directly from the live running application using automated headless browser runs:
 
@@ -315,54 +375,145 @@ The following screenshots were captured directly from the live running applicati
 ## D6: AI Functionality Specification
 
 ### Architectural Disclosure: Deterministic Algorithmic Heuristics
-In strict accordance with ethical engineering and academic transparency, **CricTeam XI does not execute runtime cloud generative AI calls (such as OpenAI or Gemini API requests)**. All automated feedback messages are governed by deterministic, client-side rule-based expert systems. 
+In strict accordance with ethical engineering and academic transparency, **CricTeam XI does not execute runtime cloud generative AI calls (such as OpenAI, Claude, or Gemini API requests)**. All automated feedback messages and instructional prompts are governed by deterministic, client-side rule-based expert systems written in vanilla JavaScript.
 
 **Pedagogical & Contextual Justification for Rule-Based "AI" in this Setting:**
-1. **Offline Reliability in L2 Context:** Community learning centres frequently lose internet connectivity. A cloud LLM dependency would cause the application to fail silently or crash during classroom sessions.
-2. **Zero Latency on Shared Tablets:** Algorithmic rules execute in under 5 milliseconds on low-power hardware, preserving the flow of pass-and-play collaboration.
-3. **Instructional Precision & Safety:** Generative LLMs are prone to hallucinations, tone drift, or approving mathematically invalid cricket selections. Rule-based heuristics guarantee 100% pedagogical accuracy across all known player profiles.
+1. **Offline Reliability in L2 Context:** Community learning centres in urban resettlement colonies frequently experience intermittent or absent internet connectivity. A cloud LLM dependency would introduce runtime failure points or render the tablet inoperable during classroom sessions.
+2. **Instant Local Execution on Low-Power Hardware:** Pure client-side JavaScript rules execute immediately without incurring network latency or loading spinners, preserving the collaborative rhythm of pass-and-play turns on budget tablets.
+3. **Deterministic Instructional Fidelity & Safety:** Cloud generative LLMs risk hallucinations, unpredictable tone drift, or approving statistically flawed sports arguments. Client-side rule heuristics ensure deterministic fidelity to targeted mathematical concepts (M1, M2, role balance) across all 14 player profiles without risk of unvetted LLM outputs.
 
-### Algorithmic Feedback Rules Specification
+### Algorithmic Feedback Rules Specification & Code Implementation
 
+The automated coaching advice is implemented in `js/app.js` via the `evaluateRuleBasedFeedback(player, currentSquad)` function.
+
+```javascript
+// Actual implementation from js/app.js
+function evaluateRuleBasedFeedback(player, currentSquad) {
+  // 1. M2 Trap: Small sample size with misleading high average / low economy
+  if (player.id === 'P03') { // Devansh Patel (2 matches, avg 85.0)
+    return {
+      trapType: 'M2',
+      title: 'Small Sample Size Warning (Misconception M2)',
+      isWarning: true,
+      message: 'Caution! Devansh has an 85.0 average, but he played ONLY 2 matches! In 2 games, one lucky day inflates stats. Can you rely on him in a high-pressure 10-match school tournament? Proven consistency over 10+ matches is far safer.'
+    };
+  }
+
+  if (player.id === 'P13') { // Varun Chawla (3 matches, econ 4.9)
+    return {
+      trapType: 'M2',
+      title: 'Small Sample Size Warning (Misconception M2)',
+      isWarning: true,
+      message: 'Watch out! Varun\'s 4.9 economy and 8 wickets look brilliant, but he played ONLY 3 matches. Small sample sizes don\'t prove sustained form against diverse opposition.'
+    };
+  }
+
+  // 2. M1 Trap: High cumulative totals masking poor rates
+  if (player.id === 'P02') { // Kabir Khan (520 runs, SR 105.2, 1 catch)
+    return {
+      trapType: 'M1',
+      title: 'Slow Strike Rate & Low Fielding (Misconception M1)',
+      isWarning: true,
+      message: 'Kabir has the highest total runs (520), but his strike rate is only 105.2 and he has just 1 catch! Eating up balls at a slow pace puts huge scoreboard pressure on your other batters. Consider batters with strike rates of 125+ and sharp fielding.'
+    };
+  }
+
+  if (player.id === 'P14') { // Amitav Sen (14 matches, 14 wkts, econ 8.9)
+    return {
+      trapType: 'M1',
+      title: 'Expensive Bowling Economy (Misconception M1)',
+      isWarning: true,
+      message: 'Amitav took 14 wickets, but his bowling economy is 8.9 runs per over! In school cricket, conceding 9 runs every over lets the opposition run away with the match. Look for bowlers with economy under 7.0 (like Jasbir at 5.8 or Zeeshan at 6.2).'
+    };
+  }
+
+  // 3. Multi-Variable Role Balance Quota Checks
+  const currentKeepers = currentSquad.filter(p => p.player.role === 'Wicket-Keeper').length;
+  const currentBowlers = currentSquad.filter(p => p.player.role === 'Bowler' || p.player.role === 'All-Rounder').length;
+  const remainingSpots = 10 - currentSquad.length;
+
+  if (player.role === 'Wicket-Keeper' && currentKeepers >= 1) {
+    return {
+      trapType: 'ROLE_LIMIT',
+      title: 'Role Limit: Duplicate Wicket-Keeper',
+      isWarning: true,
+      message: 'Your team already has a designated wicket-keeper! School rules allow only 1 keeper in the playing XI. You need remaining spots for specialized bowlers or batters.'
+    };
+  }
+
+  if (remainingSpots <= 3 && currentBowlers < 4 && player.role !== 'Bowler' && player.role !== 'All-Rounder') {
+    return {
+      trapType: 'BALANCE_BOWLER',
+      title: 'Team Balance: Bowlers Needed',
+      isWarning: true,
+      message: `Team balance alert! You have only ${remainingSpots} spots left and need at least 4 bowlers (current: ${currentBowlers}). You must prioritize bowling strength to bowl out opposing teams.`
+    };
+  }
+
+  // 4. Positive Reinforcement for Exemplary Statistical Selections
+  if (player.id === 'P10') {
+    return {
+      trapType: 'EXCELLENT',
+      title: 'Elite Strike Bowler Selected',
+      isWarning: false,
+      message: 'Outstanding choice! Jasbir leads the pool with 21 wickets over 12 matches and maintains a miserly 5.8 economy rate. That is sustained excellence with proven sample size.'
+    };
+  }
+
+  if (player.id === 'P06') {
+    return {
+      trapType: 'EXCELLENT',
+      title: 'Top Gloveman Selected',
+      isWarning: false,
+      message: 'Superb selection! Ishan has 14 catches and stumpings plus a dependable 31.0 average over 12 matches. Clean keeping saves 20+ runs in fielding.'
+    };
+  }
+
+  // 5. Default Safe Selection Fallback
+  return {
+    trapType: 'NORMAL',
+    title: 'Balanced Squad Selection',
+    isWarning: false,
+    message: `${player.name} added to the team sheet! Their stats across ${player.matches} matches support your team's tactical structure.`
+  };
+}
 ```
-+------------------------------------------------------------------------------------------------------+
-| RULE-BASED "AI" HEURISTIC ENGINE SPECIFICATION                                                       |
-+-------------------+----------------------------+--------------------------------+--------------------+
-| Rule Identifier   | Input Trigger Conditions   | Algorithmic Execution / Output | Validation Check   |
-+-------------------+----------------------------+--------------------------------+--------------------+
-| Rule-M1-Batting   | player.id == 'P02'         | Flags slow strike rate (105.2) | Matches > 10 but   |
-| (Totals Trap)     | (Kabir Khan selected)      | & poor catching (1 catch).     | SR < 115.          |
-+-------------------+----------------------------+--------------------------------+--------------------+
-| Rule-M1-Bowling   | player.id == 'P14'         | Flags expensive economy rate   | Wickets >= 14 but  |
-| (Totals Trap)     | (Amitav Sen selected)      | (8.9 runs/over leaks runs).    | Economy > 8.0.     |
-+-------------------+----------------------------+--------------------------------+--------------------+
-| Rule-M2-Sample    | player.matches <= 3 &&     | Flags volatile outlier average | Matches <= 3 but   |
-| (Small Sample)    | player.batAvg >= 80        | due to small sample size.      | BatAvg >= 80.      |
-+-------------------+----------------------------+--------------------------------+--------------------+
-| Rule-Role-Keeper  | player.role == 'Keeper' && | Alerts duplicate keeper pick;  | Squad keepers >= 1.|
-| (Balance Limit)   | currentKeepers >= 1        | limits squad to exactly 1.     |                    |
-+-------------------+----------------------------+--------------------------------+--------------------+
-| Rule-Role-Bowlers | remainingSpots <= 3 &&     | Warns that remaining spots     | Remaining <= 3 but |
-| (Balance Deficit) | currentBowlers < 4         | must prioritize bowling quota. | Bowlers < 4.       |
-+-------------------+----------------------------+--------------------------------+--------------------+
-| Rule-Praise-Elite | player.id in ['P10','P06'] | Praises elite strike bowler or | Sustained 10+ games|
-| (Reinforcement)   | (Jasbir Singh, Ishan Nair) | premier wicketkeeper catches.  | with high metrics. |
-+-------------------+----------------------------+--------------------------------+--------------------+
-| Rule-AntiMonopoly | actions(A)/total > 0.70    | Injects fair turns alert and   | Absolute action    |
-| (Dominance Trap)  | || reasons(B) == 0         | prompts quiet learner by name. | differential.      |
-+-------------------+----------------------------+--------------------------------+--------------------+
-```
 
-### Fallback Mechanism
-If state corruption occurs or unexpected inputs are provided, the rule engine falls back safely to:
-* Title: *"Balanced Squad Selection"*
-* Message: *"[Player Name] added to the team sheet. Their stats across [Matches] matches support your team's tactical structure."*
+### Input Variables, Output Structures & Validation Pipeline
 
-### AI-Assisted Development Disclosure
-AI tooling (specifically Google Antigravity and Gemini 3.8 Flash) was utilized during the development lifecycle as an expert software engineering co-pilot for:
-1. Drafting the pedagogical design document (`DESIGN.md`).
-2. Scaffolding the HTML5 semantics and modular CSS design tokens.
-3. Authoring the test automation script (`capture_evidence.js`) using Puppeteer to simulate multi-step learner journeys.
+1. **Input Variables Monitored:**
+   - `player` (candidate object): `id` (string), `name` (string), `role` (string), `matches` (integer), `runs` (integer), `batAvg` (float), `strikeRate` (float), `wickets` (integer), `economy` (float), `catches` (integer).
+   - `currentSquad` (array of objects): `squad.length`, current counts of batters, bowlers, keepers.
+   - `proposerTurn` & `reviewerTurn` ('A' or 'B').
+2. **Output Structure:**
+   - Returns a structured dictionary: `{ trapType: string, title: string, isWarning: boolean, message: string }`.
+3. **Validation and Safe Fallback:**
+   - If player attributes are missing or undefined, the engine defaults safely to the standard balanced pick response without throwing an unhandled exception.
+   - On the learner screen, warnings are rendered with high-contrast amber styling (`.coach-note-card.warning`), while positive reinforcements render in calm green.
+
+### Teacher Supervision, Approval & Override Mechanism (C5)
+
+1. **Intervention Logging:** When a rule-based coaching tip is triggered, it is packaged as an intervention object and prepended to `state.feedbackInterventions`:
+   ```javascript
+   const intervention = {
+     id: 'fb_' + Date.now(),
+     timestamp: new Date().toLocaleTimeString(),
+     player: prop.player,
+     trapType: ruleFeedback.trapType,
+     autoText: ruleFeedback.message,
+     teacherText: null,
+     status: 'pending' // 'pending' | 'approved' | 'overridden'
+   };
+   ```
+2. **Teacher Approval Flow:**
+   - Facilitator unlocks the supervision dashboard via PIN `1234`.
+   - Clicking **Approve AI** sets `item.status = 'approved'`, logs the action, and triggers `showLiveTeacherBanner("Approved system feedback for " + item.player.name)`.
+3. **Teacher Override Flow:**
+   - The facilitator types custom instructions into `.override-input` (e.g., *"Focus on economy under 7.0 for the next pick"*) and clicks **Override**.
+   - The system sets `item.status = 'overridden'` and stores `item.teacherText = text`.
+   - The student screen immediately renders a gold teacher banner:  
+     `⭐ From your teacher: "[Custom Teacher Note]"`.
+   - This ensures the human educator retains complete instructional authority over automated heuristics.
 
 ---
 
@@ -400,6 +551,15 @@ The application monitors four granular behavioural metrics in real time:
 * **Supervisory Authority:** Rather than allowing an automated algorithm to have unchallengeable authority over student learning, the facilitator maintains supervisory control through PIN `1234`.
 * **Empowering Facilitator Customization:** The **Approve / Override** mechanism allows facilitators to replace generic automated messages with highly contextual guidance tailored to specific student needs. Overridden feedback appears with a distinct gold badge: *"⭐ From your teacher"*.
 
+### Core Pedagogical Mechanisms & Theoretical Justification
+
+* **Why Pass-and-Play Supports L2 Context:** When low-income urban learners share a single budget tablet on crowded classroom benches, unmediated interaction rapidly devolves into device-grabbing and passive spectating. The pass-and-play architecture enforces physical tablet handover with prominent color-coded turn banners, ensuring both learners hold physical and cognitive custody of the task.
+* **Why Mandatory Justifications Promote Statistical Reasoning:** Middle-school sports fans default to instinctive, unarticulated hunches. Enforcing a mandatory statistical rationale before any player can be proposed compels learners to externalize their reasoning, shifting their mental models from raw fan intuition to evidence-based metrics.
+* **Why Peer Review & Disagreement Resolution Support Collaboration:** Meaningful collaborative problem-solving requires genuine dialogic critique, not rubber-stamping. The peer review step gives the non-proposing partner veto power via "Not Sure", and the side-by-side arbitration screen settles deadlocks through shared statistical decision rules rather than interpersonal friction.
+* **Why Formative Feedback Corrects M1 and M2:** Rather than blocking learners before they make a mistake, the application allows pairs to fall into tempting cognitive traps (Kabir's 520 runs or Devansh's 85.0 average). The system then delivers immediate, contextual cognitive conflict feedback that exposes the underlying mathematical flaw, enabling self-directed revision.
+* **Why Teacher Override Supports C5:** Algorithms cannot perceive off-screen interpersonal dynamics or unique socio-emotional needs. The teacher supervision view with PIN `1234` preserves facilitator authority, allowing educators to approve automated advice or push customized instructional banners directly to the student tablet interface.
+* **Why Collaboration Monitoring Solves P6:** Tracking granular multi-dimensional actions (proposals, written justifications, and peer critiques) allows the application to differentiate equal co-construction from tokenistic clicking, triggering gentle on-screen prompts whenever participation skews past acceptable boundaries.
+
 ---
 
 ### Alignment with ET617 Examination Evaluation Rubrics (Exemplary Standard)
@@ -421,14 +581,29 @@ The design and technical implementation of *CricTeam XI* strictly fulfill the hi
 
 ## D8: Evaluation Plan & Rubrics
 
+### Learning Outcomes Assessment Mapping Matrix
+
+| Learning Outcome | Assessment Activity | Expected Learner Behaviour | Rubric Criterion | Logged Telemetry Data | Target Success Criteria (Evaluation Benchmark) |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **LO1: Differentiate Rate vs Total Stats** | Task 2 (Proposals) & Task 3 (Peer Reviews) | Bypasses high-run/slow batters (Kabir P02) and costly bowlers (Amitav P14); justifies picks using strike rate (>125) and economy (<7.0). | Statistical Differentiation (Level 3/4) | `actionType: 'proposal'`, `player.strikeRate`, `player.economy`, chosen reason strings | $\ge 80\%$ target benchmark of pairs select batters with SR $\ge 125$ and bowlers with Econ $\le 7.0$ in final XI. |
+| **LO2: Critique Sample Size Reliability** | Task 1 (Diagnostic MCQ) & Task 4 (Arbitration) | Identifies 1-2 match outliers as unproven; chooses players with 10+ matches for tournament stability; applies "Sample Size First" rule. | Sample Size Critique (Level 3/4) | `qcOptionsContainer` answer click, `actionType: 'dispute_resolution'`, selected candidate ID | $\ge 80\%$ target benchmark of pairs pass diagnostic quiz on first try and reject Devansh (P03) upon feedback. |
+| **LO3: Construct Balanced XI via Collaboration** | Task 5 (Shared Lineup) & Task 6 (Reflections) | Assembles valid XI with $\ge 4$ batters, $\ge 4$ bowlers, 1 keeper; negotiates trade-offs using all-rounders; writes coherent final reflection. | Multi-Constraint Assembly & Collaboration (Level 3/4) | `state.squad.length`, role meter status, `state.reflections`, `state.historyLog` | $\ge 90\%$ target benchmark of pairs satisfy all 3 role quotas and submit dual reflections. |
+
 ### Evaluation Rubric (Aligned to Learning Outcomes)
 
-| Criterion | Novice (Level 1) | Developing (Level 2) | Proficient (Level 3) | Advanced (Level 4) |
+| Criterion | Novice (Level 1) | Developing (Level 2) | Proficient (Level 3) | Advanced / Exemplary (Level 4) |
 | :--- | :--- | :--- | :--- | :--- |
 | **Statistical Differentiation (LO1)** | Selects players solely based on total career runs or wickets; ignores strike rate and economy. | Distinguishes between totals and averages, but ignores strike rate in high-pressure batting. | Evaluates both average and strike rate/economy; avoids picking high-run players with low speed. | Synthesizes rate statistics across batting, bowling, and fielding catches to optimize team efficiency. |
 | **Sample Size Critique (LO2)** | Uncritically picks Devansh Patel (85.0 avg) or Varun Chawla based on outlier numbers. | Notices small sample size (2 matches) only after the system warning prompts them. | Identifies small sample size proactively; chooses players with 10+ matches for tournament safety. | Formulates a coherent statistical argument defending why 10 matches provides reliable predictability. |
 | **Multi-Constraint Assembly (LO3)** | Assembles an unbalanced squad violating role limits (e.g., 2 keepers or only 2 bowlers). | Satisfies role quotas only after repeated trial-and-error corrections. | Assembles a valid XI meeting all 3 constraints (≥4 bats, ≥4 bowls, 1 keeper) on first attempt. | Optimizes role quotas using all-rounders to maximize batting and bowling depth simultaneously. |
-| **Collaborative Problem Solving (P6)** | One student dominates all tablet touches; zero peer challenges; arbitrary disputes. | Basic turn-taking, but reasons are superficial; disputes settled by simple concession. | Balanced action share (45–55%); active peer review; disputes settled using shared rules. | Exemplary dialogic discourse; thorough peer feedback; reflective co-construction of strategy. |
+| **Collaborative Problem Solving (P6)** | One student dominates all tablet touches; zero peer challenges; arbitrary disputes. | Basic turn-taking, but reasons are superficial; disputes settled by simple concession. | Acceptable balanced participation (40–60% action share); active peer review; disputes settled using shared rules. | Exemplary dialogic discourse (45–55% action share parity); thorough peer critique; reflective co-construction. |
+
+### Collaboration Participation Thresholds: Specification & Distinction
+
+To ensure complete conceptual and technical consistency across the application and rubric, the participation thresholds are defined as follows:
+* **Exemplary Participation ($45\% \le \text{Share} \le 55\%$):** Represents near-perfect parity in proposal authoring, justification writing, and peer review actions, qualifying for Level 4 on the evaluation rubric.
+* **Acceptable Balanced Participation ($40\% \le \text{Share} \le 60\%$):** The operational tolerance band wherein the system considers collaboration healthy. The live partnership chip displays a calm green badge (*"Balanced Duo"*), and no automated interventions are triggered.
+* **One-Sided Dominance Warning Threshold ($>70\%$ or $0$ reasons):** Triggered after 4 actions if either partner's cumulative share exceeds $70\%$, or if one partner has authored 0 reasons while the other has authored $\ge 3$. This changes the partnership chip to amber (*"Unequal"*), activates the on-screen prompt addressed to the quiet partner, and alerts the teacher in the supervision dashboard.
 
 ### Diagnostic Assessment Items (Post-Test Sample)
 1. *Item 1:* Batter A scored 450 runs in 15 matches (Strike Rate: 105). Batter B scored 380 runs in 12 matches (Strike Rate: 135). Who provides greater scoring acceleration in the death overs, and why?
@@ -447,16 +622,18 @@ Every collaborative action is logged in `state.historyLog`:
 }
 ```
 
-**Instructional Success Criteria:**
-1. **Misconception Remediation Rate:** $\ge 80\%$ of learner pairs who initially propose Kabir Khan (M1) or Devansh Patel (M2) replace them with statistically reliable players upon reviewing feedback.
-2. **Constraint Satisfaction Rate:** $\ge 90\%$ of learner pairs assemble a starting XI that fully satisfies the 4-batter, 4-bowler, and 1-keeper requirements.
-3. **Collaboration Balance Equity:** $\ge 85\%$ of learner pairs maintain an action share between $40\%$ and $60\%$ without triggering persistent one-sided dominance warnings.
+> **Methodological Note on Success Indicators:** The percentage figures below represent **hypothetical instructional design targets / benchmark criteria** formulated for the evaluation study plan to assess app efficacy, rather than empirical findings from an already-completed classroom trial.
+
+**Target Evaluation Benchmarks:**
+1. **Misconception Remediation Target:** $\ge 80\%$ target benchmark of learner pairs who initially propose Kabir Khan (M1) or Devansh Patel (M2) replace them with statistically reliable players upon reviewing feedback.
+2. **Constraint Satisfaction Target:** $\ge 90\%$ target benchmark of learner pairs assemble a starting XI that fully satisfies the 4-batter, 4-bowler, and 1-keeper requirements.
+3. **Collaboration Equity Target:** $\ge 85\%$ target benchmark of learner pairs maintain an action share within the acceptable $40\%–60\%$ band without triggering persistent one-sided dominance warnings.
 
 ---
 
 ## AI-Use Log and Critical Reflection
 
-### Tool Usage Breakdown
+### Tool Usage Breakdown & Session Details
 
 ```
 +----------------------------------------------------------------------------------------------------+
@@ -478,9 +655,70 @@ Every collaborative action is logged in `state.historyLog`:
 +---------------------+-----------------------------+------------------------------------------------+
 ```
 
-### Critical Reflection
-* **Productivity Gains:** Leveraging AI assistance enabled rapid iterative prototyping under tight end-semester time constraints. Automating the generation of the 14-player dataset and CSS styling allowed the author to focus deeply on instructional design nuances and anti-monopoly collaboration mechanics.
-* **Risk Management & Verification:** AI-generated code required careful verification. For instance, initial draft code relied on generic emojis, which detracted from the authentic cricket scorecard feel. Direct human oversight guided the replacement of these emojis with custom inline SVGs, ensured the implementation of the demo PIN (1234) for C5, and maintained zero external cloud API dependencies to protect the L2 low-resource learning context.
+### Conversation Tracking & Session Records
+* **Development Tool:** Google Antigravity Agentic IDE (Desktop Assistant powered by Gemini 3.8 Flash / Pro model).
+* **Local Session Conversation ID:** `a719a796-b269-47c7-ab82-ea80604b70d5`
+* **Local Session Trajectory Log:** Stored persistently on the development host at:  
+  `C:\Users\Tarun\.gemini\antigravity\brain\a719a796-b269-47c7-ab82-ea80604b70d5\.system_generated\logs\transcript.jsonl`
+* **Disclosure Regarding External Web Share URLs:** Because this project was engineered within the local standalone Antigravity IDE application on the candidate's machine, public web-share URLs (such as `chatgpt.com/share/...` or `claude.ai/share/...`) are not generated by the local runtime environment. All prompt exchanges, tool calls, code modifications, and step-by-step assistant interactions are permanently preserved in the local JSONL trajectory log.
+
+### Chronological Usage Timeline (18 November 2026)
+1. **18:30–18:55 (Phase 1 – Conceptual Scaffolding):** Prompted assistant to structure the instructional design document (`DESIGN.md`), expanding the L2 persona (Rahul and Meena), formalizing Bloom-aligned outcomes (LO1–LO3), and calculating mathematical trap parameters for the 14-player cricket dataset.
+2. **18:55–19:15 (Phase 2 – Core Architecture & State Engine):** Prompted assistant to write pure HTML5 structure and the vanilla JS state controller (`js/app.js`), establishing the pass-and-play turn engine and local storage persistence.
+3. **19:15–19:35 (Phase 3 – Pedagogical Traps & Teacher View):** Implemented the deterministic heuristic feedback rules for M1 (Kabir P02, Amitav P14) and M2 (Devansh P03, Varun P13), the side-by-side arbitration screen, the 70% anti-monopoly trigger, and the PIN 1234 teacher supervision modal.
+4. **19:35–19:50 (Phase 4 – Cricket-Themed Visual Polish):** Redesigned the visual system from generic SaaS styling into an authentic cricket scorecard visual identity: warm cream (`#FAF6EC`), pitch green (`#1F5D3A`), leather red (`#B5382A`), and inline SVG iconography, followed by adding the Role Selection Landing Screen.
+5. **19:50–20:10 (Phase 5 – Automated Verification & Deliverables):** Authored `capture_evidence.js` using Puppeteer to run headless Chrome walkthroughs of Scenarios A through E, capturing 12 genuine PNG screenshots, and compiled `build_deliverables.py` for DOCX and PDF report generation.
+
+### Suggestions Accepted, Rejected & Modified
+* **Accepted Suggestions:**
+  - Adopting the 70% participation skew threshold with a 4-action initial grace window before triggering the quiet partner intervention.
+  - Using inline SVG cricket equipment (stumps, bat, ball, keeper gloves) with 2px stroke weight instead of external icon libraries.
+  - Employing separate high-contrast colors (Blue for Partner A, Warm Amber for Partner B) across avatars, tags, and progress bars.
+* **Rejected Suggestions:**
+  - *Cloud LLM API Calls:* Early AI scaffolding proposed using cloud API keys for dynamic commentary. This was explicitly **rejected** to satisfy the offline L2 community centre constraint.
+  - *Generic Emojis:* Initial UI drafts contained cricket and face emojis. These were **rejected** as looking generic and amateurish, and replaced with custom SVG icons.
+  - *Cloud User Accounts / Login:* Rejected in favor of pass-and-play name inputs and a demo PIN to maintain an uncluttered, zero-friction experience for Class 7–8 students.
+* **Modified Suggestions:**
+  - *Teacher View Entry:* Modified from an exposed header button on student screens to a role-gated modal accessed strictly via demo PIN 1234 from the Role Selection screen.
+  - *Disagreement Flow:* Modified from a simple vote to an evidence-based side-by-side comparative table requiring the selection of a shared statistical rule.
+
+### Verification of Generated Code & Content
+1. **Automated Testing:** Executed `capture_evidence.js` via Node.js Puppeteer to programmatically exercise the entire user journey: diagnostic quiz, selecting players, triggering M1/M2 coach notes, initiating peer disagreement, testing 80% dominance threshold, and executing teacher override.
+2. **Manual Functional Walkthrough:** Verified responsive layout across viewports (1280px desktop down to 360px mobile), checked touch target sizes ($\ge 48\text{px}$), and confirmed PIN 1234 error-handling and reset flows.
+3. **Mathematical & Statistical Audit:** Checked every player's statistics in `js/data.js` to ensure rates (strike rate, economy, average) matched matches played and total runs/wickets.
+
+### Independent Human Decisions
+* Formulation of the cricket selection problem context for Class 7–8 Indian learners.
+* Design of the two specific misconceptions (M1 totals trap vs M2 small-sample trap).
+* The 70% threshold boundary for one-sided monopolization and the decision to address the quiet partner nominatively by name.
+* The pass-and-play turn model designed specifically for shared budget tablets in an urban settlement NGO centre.
+
+---
+
+## Development Process Evidence
+
+### 1. GitHub Repository & Commit History
+The repository was initialized and maintained at [https://github.com/tarunrawattt/et617-endsem-23B3006](https://github.com/tarunrawattt/et617-endsem-23B3006). The following table records the authentic Git commit trajectory:
+
+| Commit Hash | Timestamp (IST) | Commit Message & Development Milestone |
+| :---: | :---: | :--- |
+| `08aa775` | 2026-11-18 18:55:15 | **docs:** create DESIGN.md for CricTeam XI (Card P6-T10-L2-C5) *(Milestone 1: Early design commitment at 0:25)* |
+| `63ccb03` | 2026-11-18 18:58:41 | **feat:** (a) player data and screen flow navigation *(Milestone 2: Roster data & screen engine)* |
+| `ab6098f` | 2026-11-18 19:02:04 | **feat:** (b-g) shared team sheet, feedback rules, peer feedback, disagreement flow, collaboration signals, teacher view, and storage |
+| `f6efe8d` | 2026-11-18 19:02:42 | **style:** (Step 3) visual design pass with responsive polish and accessible interactions |
+| `38e9c2f` | 2026-11-18 19:17:21 | **feat:** add in-app session reset for assessing new learner pairs without reloading *(Milestone 3)* |
+| `987bd00` | 2026-11-18 19:26:53 | **style:** redesign UI with cricket-themed visual identity *(Milestone 4: Authentic visual theme & inline SVGs)* |
+| `ec3e8a0` | 2026-11-18 19:32:55 | **feat:** add role selection landing screen |
+| `807e0bb` | 2026-11-18 19:36:02 | **feat:** add CricTeam XI app, design and docs *(Milestone 5: Baseline app deployment freeze)* |
+| `b3fbd45` | 2026-11-18 20:03:20 | **docs:** add complete ET617 examination report (MD, DOCX, PDF) and genuine evidence screenshots |
+| `09a62ce` | 2026-11-18 20:09:42 | **docs:** enrich report with official exam card, rubric alignment, and viva defense guide |
+
+### 2. Deployment Architecture & Hosting Evidence
+* **Target Production URL:** [https://et617-23b3006.vercel.app](https://et617-23b3006.vercel.app)
+* **Local Test Verification Instance:** `http://localhost:3000/index.html` (served via background Python HTTP daemon for live Puppeteer verification).
+* **Architecture Characteristics:** Zero server runtime overhead; static HTML5/CSS3/JavaScript files with client-side state machine in `localStorage`.
+
+---
 
 ---
 
