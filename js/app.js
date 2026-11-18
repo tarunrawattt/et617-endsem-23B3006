@@ -745,13 +745,25 @@
 
   // Disagreement Resolution Choices
   btnKeepProposed.onclick = () => {
-    resolveDisputeWithPlayer(state.pendingDisagreement.proposedPlayer, 'Agreed to keep originally proposed player after discussion.');
+    const origProposer = state.pendingDisagreement ? state.pendingDisagreement.proposedBy : state.partnerA;
+    const origTurn = state.pendingDisagreement ? (origProposer === state.partnerA ? 'A' : 'B') : 'Both';
+    resolveDisputeWithPlayer(
+      state.pendingDisagreement.proposedPlayer,
+      'Agreed to keep originally proposed player after discussion.',
+      origProposer,
+      origTurn
+    );
   };
 
   btnChooseAlternative.onclick = () => {
     const altPlayer = PLAYERS.find(pl => pl.id === selectAltPlayer.value);
     if (altPlayer) {
-      resolveDisputeWithPlayer(altPlayer, 'Agreed to switch to alternative player following shared selection rule.');
+      resolveDisputeWithPlayer(
+        altPlayer,
+        'Agreed to switch to alternative player following shared selection rule.',
+        `${state.partnerA} & ${state.partnerB}`,
+        'Both'
+      );
     }
   };
 
@@ -763,9 +775,11 @@
     showScreen('screenBuildTeam');
   };
 
-  function resolveDisputeWithPlayer(player, consensusNote) {
+  function resolveDisputeWithPlayer(player, consensusNote, proposerName, proposerTurn) {
     const selectedRuleRadio = document.querySelector('input[name="sharedRule"]:checked');
     const ruleChosen = selectedRuleRadio ? selectedRuleRadio.value : 'sample';
+    const finalProposer = proposerName || `${state.partnerA} & ${state.partnerB}`;
+    const finalTurn = proposerTurn || (finalProposer === state.partnerA ? 'A' : (finalProposer === state.partnerB ? 'B' : 'Both'));
 
     const feedback = evaluateRuleBasedFeedback(player, state.squad);
     const intervention = {
@@ -781,8 +795,8 @@
 
     state.squad.push({
       player: player,
-      proposedBy: `${state.partnerA} & ${state.partnerB}`,
-      proposerTurn: 'Both',
+      proposedBy: finalProposer,
+      proposerTurn: finalTurn,
       proposeReason: `Resolved disagreement using rule: "${ruleChosen}"`,
       reviewedBy: 'Both',
       reviewerTurn: 'Both',
