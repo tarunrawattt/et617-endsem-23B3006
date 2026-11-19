@@ -32,6 +32,7 @@
     // Collaboration metrics (Design Challenge)
     actionsA: { proposals: 0, reasons: 0, reviews: 0, total: 0 },
     actionsB: { proposals: 0, reasons: 0, reviews: 0, total: 0 },
+    vetoes: { partnerA: 0, partnerB: 0 },
     historyLog: [], // Complete audit log of every action
 
     // AI Feedback Interventions (Rule-based) & Teacher Overrides (C5)
@@ -210,6 +211,7 @@
     }
 
     updateTurnHeader();
+    updateCollaborationDisplay();
     saveStateToStorage();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -260,6 +262,7 @@
   function toggleTurn() {
     state.currentTurn = state.currentTurn === 'A' ? 'B' : 'A';
     updateTurnHeader();
+    updateCollaborationDisplay();
     saveStateToStorage();
   }
 
@@ -683,8 +686,10 @@
     state.pendingDisagreement = {
       proposedPlayer: prop.player,
       proposedBy: prop.proposedBy,
+      proposerTurn: prop.proposerTurn,
       proposeReason: prop.proposeReason,
       reviewedBy: prop.reviewedBy,
+      reviewerTurn: prop.reviewerTurn,
       reviewReason: reviewerReason
     };
 
@@ -743,41 +748,66 @@
 
   // Disagreement Resolution Choices
   btnKeepProposed.onclick = () => {
-    const origProposer = state.pendingDisagreement ? state.pendingDisagreement.proposedBy : state.partnerA;
-    const origTurn = state.pendingDisagreement ? (origProposer === state.partnerA ? 'A' : 'B') : 'Both';
+    const d = state.pendingDisagreement;
+    const origProposer = d ? d.proposedBy : state.partnerA;
+    const origTurn = d ? (d.proposerTurn || (origProposer === state.partnerA ? 'A' : 'B')) : 'A';
+    const origReviewer = d ? d.reviewedBy : state.partnerB;
+    const origReviewerTurn = d ? (d.reviewerTurn || (origTurn === 'A' ? 'B' : 'A')) : 'B';
+
     resolveDisputeWithPlayer(
-      state.pendingDisagreement.proposedPlayer,
+      d ? d.proposedPlayer : activePlayerForModal,
       'Agreed to keep originally proposed player after discussion.',
       origProposer,
-      origTurn
+      origTurn,
+      origReviewer,
+      origReviewerTurn
     );
   };
 
   btnChooseAlternative.onclick = () => {
+    const d = state.pendingDisagreement;
     const altPlayer = PLAYERS.find(pl => pl.id === selectAltPlayer.value);
-    if (altPlayer) {
+    if (altPlayer && d) {
+      // The challenger who rejected the initial pick chose this alternative!
+      const challengerName = d.reviewedBy;
+      const challengerTurn = d.reviewerTurn || (d.proposerTurn === 'A' ? 'B' : 'A');
+
       resolveDisputeWithPlayer(
         altPlayer,
-        'Agreed to switch to alternative player following shared selection rule.',
-        `${state.partnerA} & ${state.partnerB}`,
-        'Both'
+        `Switched to alternative player ${altPlayer.name} selected by ${challengerName}.`,
+        challengerName,
+        challengerTurn,
+        null,
+        null
       );
     }
   };
 
   btnCancelPick.onclick = () => {
-    recordAction(state.currentTurn, 'review', 'Disagreement ended in cancel: picking another player', null);
+    const d = state.pendingDisagreement;
+    const challengerTurn = d ? (d.reviewerTurn || (d.proposerTurn === 'A' ? 'B' : 'A')) : (state.currentTurn === 'A' ? 'B' : 'A');
+    if (challengerTurn === 'A') {
+      if (!state.vetoes) state.vetoes = { partnerA: 0, partnerB: 0 };
+      state.vetoes.partnerA++;
+    } else {
+      if (!state.vetoes) state.vetoes = { partnerA: 0, partnerB: 0 };
+      state.vetoes.partnerB++;
+    }
+    recordAction(challengerTurn, 'review', 'Vetoed proposal: cancelled pick and returned to selection', null);
     state.pendingProposal = null;
     state.pendingDisagreement = null;
+    updateCollaborationDisplay();
     toggleTurn();
     showScreen('screenBuildTeam');
   };
 
-  function resolveDisputeWithPlayer(player, consensusNote, proposerName, proposerTurn) {
+  function resolveDisputeWithPlayer(player, consensusNote, proposerName, proposerTurn, reviewerName, reviewerTurn) {
     const selectedRuleRadio = document.querySelector('input[name="sharedRule"]:checked');
     const ruleChosen = selectedRuleRadio ? selectedRuleRadio.value : 'sample';
-    const finalProposer = proposerName || `${state.partnerA} & ${state.partnerB}`;
-    const finalTurn = proposerTurn || (finalProposer === state.partnerA ? 'A' : (finalProposer === state.partnerB ? 'B' : 'Both'));
+    const finalProposer = proposerName || state.partnerA;
+    const finalTurn = proposerTurn || 'A';
+    const finalReviewer = reviewerName || null;
+    const finalReviewerTurn = reviewerTurn || null;
 
     const feedback = evaluateRuleBasedFeedback(player, state.squad);
     const intervention = {
@@ -796,14 +826,14 @@
       proposedBy: finalProposer,
       proposerTurn: finalTurn,
       proposeReason: `Resolved disagreement using rule: "${ruleChosen}"`,
-      reviewedBy: 'Both',
-      reviewerTurn: 'Both',
-      reviewType: 'Consensus',
+      reviewedBy: finalReviewer,
+      reviewerTurn: finalReviewerTurn,
+      reviewType: 'Dispute Resolution',
       reviewReason: consensusNote,
       feedbackId: intervention.id
     });
 
-    recordAction('Both', 'review', `Consensus reached on ${player.name}: ${consensusNote}`, player);
+    recordAction(finalTurn, 'proposal', `Resolved pick for ${player.name}: ${consensusNote}`, player);
 
     renderSquadList();
     renderPlayerPool();
@@ -934,21 +964,31 @@
       } else if (entry.reviewerTurn === 'B') {
         revB++;
         if (entry.reviewReason) rB++;
+      } else if (entry.reviewerTurn === 'Both') {
+        revA++;
+        revB++;
+        if (entry.reviewReason) {
+          rA++;
+          rB++;
+        }
       }
     });
+
+    const vA = state.vetoes ? (state.vetoes.partnerA || 0) : 0;
+    const vB = state.vetoes ? (state.vetoes.partnerB || 0) : 0;
 
     state.actionsA = {
       proposals: pA,
       reasons: rA,
-      reviews: revA,
-      total: pA + revA
+      reviews: revA + vA,
+      total: pA + revA + vA
     };
 
     state.actionsB = {
       proposals: pB,
       reasons: rB,
-      reviews: revB,
-      total: pB + revB
+      reviews: revB + vB,
+      total: pB + revB + vB
     };
   }
 
@@ -1220,12 +1260,16 @@
       const data = localStorage.getItem(STORAGE_KEY);
       if (data) {
         state = JSON.parse(data);
+        if (inputPartnerA && state.partnerA) inputPartnerA.value = state.partnerA;
+        if (inputPartnerB && state.partnerB) inputPartnerB.value = state.partnerB;
         reflectNameA.textContent = state.partnerA;
         reflectNameB.textContent = state.partnerB;
+        if (teacherPairNames) teacherPairNames.textContent = `${state.partnerA} & ${state.partnerB}`;
         renderSquadList();
         renderPlayerPool();
         updateBalanceMeters();
         updateCollaborationDisplay();
+        updateTurnHeader();
       }
     } catch (e) {
       console.warn('Could not load from localStorage', e);
@@ -1334,13 +1378,16 @@
     }
 
     btnStartGame.onclick = () => {
-      const a = inputPartnerA.value.trim() || 'Rahul';
-      const b = inputPartnerB.value.trim() || 'Meena';
+      const a = inputPartnerA.value.trim() || 'Partner A';
+      const b = inputPartnerB.value.trim() || 'Partner B';
       state.partnerA = a;
       state.partnerB = b;
       state.currentTurn = 'A';
       reflectNameA.textContent = a;
       reflectNameB.textContent = b;
+      if (teacherPairNames) teacherPairNames.textContent = `${a} & ${b}`;
+      updateTurnHeader();
+      updateCollaborationDisplay();
       showScreen('screenStatsCoach');
     };
 
@@ -1433,6 +1480,7 @@
     state.pendingReviewFeedback = null;
     state.actionsA = { proposals: 0, reasons: 0, reviews: 0, total: 0 };
     state.actionsB = { proposals: 0, reasons: 0, reviews: 0, total: 0 };
+    state.vetoes = { partnerA: 0, partnerB: 0 };
     state.historyLog = [];
     state.feedbackInterventions = [];
     state.reflections = { partnerA: '', partnerB: '' };

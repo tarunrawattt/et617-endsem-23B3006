@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,16 +8,20 @@
   <!-- Google Fonts: Barlow Condensed for display scoreboard feel, DM Sans for clean body -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
   <!-- Global Cricket Header -->
   <header class="app-header">
     <div class="header-left">
       <!-- Stumps and ball logo mark -->
       <div class="brand-crest" aria-hidden="true">
-        <svg class="crest-svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg class="crest-svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M6 3v17M12 3v17M18 3v17M4 3h16" />
           <circle cx="19.5" cy="18.5" r="2.2" fill="#B5382A" stroke="#B5382A" />
         </svg>
@@ -36,17 +41,32 @@
 
       <!-- Action buttons -->
       <button id="btnSwitchRole" class="nav-btn nav-btn-subtle" title="Switch between Student and Teacher roles">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 3h5v5" />
+          <path d="M4 20L21 3" />
+          <path d="M21 16v5h-5" />
+          <path d="M15 15l6 6" />
+          <path d="M4 4l5 5" />
+        </svg>
         <span>Switch Role</span>
       </button>
 
       <button id="btnResetSession" class="nav-btn nav-btn-subtle" title="Start a fresh session with a new learner pair">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+          <path d="M3 3v5h5" />
+        </svg>
         <span>New Pair</span>
       </button>
 
       <button id="btnAboutModal" class="nav-btn nav-btn-subtle" title="About this Project">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 16v-4M12 8h.01" />
+        </svg>
         <span>About</span>
       </button>
 
@@ -57,14 +77,15 @@
 
   <!-- Main Container for Screens -->
   <main class="main-container">
-    
+
     <!-- SCREEN 0: Choose Your Role Landing Screen (Initial Entry Point) -->
     <section id="screenRoleLanding" class="screen-view active">
       <div class="card role-landing-container">
         <!-- Brand Crest & Header -->
         <div class="landing-header">
           <div class="landing-brand-crest" aria-hidden="true">
-            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
               <path d="M6 3v17M12 3v17M18 3v17M4 3h16" />
               <circle cx="19.5" cy="18.5" r="2.2" fill="#B5382A" stroke="#B5382A" />
             </svg>
@@ -76,34 +97,44 @@
 
         <!-- Two Equal-Size Choice Cards -->
         <div class="role-cards-grid">
-          
+
           <!-- Student Role Card -->
-          <div class="role-choice-card student-role-card" id="cardRoleStudent" tabindex="0" role="button" aria-label="Continue as Student">
+          <div class="role-choice-card student-role-card" id="cardRoleStudent" tabindex="0" role="button"
+            aria-label="Continue as Student">
             <div class="role-card-top">
               <div class="role-icon-wrap icon-student">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                 </svg>
               </div>
               <span class="role-badge-tag student-tag">Learner Mode</span>
             </div>
-            
+
             <div class="role-card-body">
               <h3 class="role-card-title">I'm a Student</h3>
               <p class="role-card-desc">Pair up, pick players, and give your reasons.</p>
             </div>
-            
+
             <div class="role-card-footer">
               <button id="btnRoleStudent" class="btn btn-pitch btn-lg role-action-btn">
                 <span>Continue as Student</span>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
               </button>
             </div>
 
             <!-- Resume Saved Squad Shortcut (Under Student Card) -->
             <div id="landingResumeContainer" class="landing-resume-wrap hidden">
               <button id="btnLandingResume" class="resume-shortcut-btn" title="Resume your in-progress squad">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+                  <path d="M21 3v5h-5" />
+                </svg>
                 <span>Resume saved squad (<span id="landingResumeCount">0</span>/11)</span>
               </button>
             </div>
@@ -113,21 +144,26 @@
           <div class="role-choice-card teacher-role-card" id="cardRoleTeacher">
             <div class="role-card-top">
               <div class="role-icon-wrap icon-teacher">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                  <path d="M6 12v5c3 3 9 3 12 0v-5" />
                 </svg>
               </div>
               <span class="role-badge-tag teacher-tag">Facilitator</span>
             </div>
-            
+
             <div class="role-card-body">
               <h3 class="role-card-title">I'm a Teacher</h3>
               <p class="role-card-desc">See how pairs are doing and review feedback.</p>
             </div>
-            
+
             <div class="role-card-footer">
               <button id="btnRoleTeacher" class="btn btn-sand btn-lg role-action-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
                 <span>Continue as Teacher</span>
               </button>
             </div>
@@ -139,7 +175,8 @@
                 <button id="btnCancelLandingPin" class="btn-close-sm" aria-label="Cancel PIN entry">&times;</button>
               </div>
               <div class="pin-input-row">
-                <input type="password" id="inputLandingTeacherPin" class="landing-pin-input" placeholder="••••" maxlength="4" inputmode="numeric" pattern="[0-9]*" aria-label="Teacher 4-digit PIN">
+                <input type="password" id="inputLandingTeacherPin" class="landing-pin-input" placeholder="••••"
+                  maxlength="4" inputmode="numeric" pattern="[0-9]*" aria-label="Teacher 4-digit PIN">
                 <button id="btnSubmitLandingPin" class="btn btn-pitch btn-sm">Enter</button>
               </div>
               <p id="landingPinError" class="landing-pin-error hidden">That PIN doesn't match. Try again.</p>
@@ -157,7 +194,12 @@
         <div class="hero-layout">
           <div class="hero-copy">
             <span class="scoreboard-chip">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
               Shared Tablet &bull; Pass-and-Play
             </span>
             <h2 class="hero-title">Select Your School’s Match-Winning XI</h2>
@@ -173,18 +215,18 @@
               <rect x="10" y="10" width="180" height="110" rx="16" fill="#1F5D3A" opacity="0.9" />
               <!-- Pitch Crease -->
               <rect x="55" y="24" width="90" height="82" rx="4" fill="#DFD3BA" />
-              <line x1="75" y1="24" x2="75" y2="106" stroke="#FAF6EC" stroke-width="2" stroke-dasharray="3 3"/>
-              <line x1="125" y1="24" x2="125" y2="106" stroke="#FAF6EC" stroke-width="2" stroke-dasharray="3 3"/>
+              <line x1="75" y1="24" x2="75" y2="106" stroke="#FAF6EC" stroke-width="2" stroke-dasharray="3 3" />
+              <line x1="125" y1="24" x2="125" y2="106" stroke="#FAF6EC" stroke-width="2" stroke-dasharray="3 3" />
               <!-- Stumps -->
-              <circle cx="65" cy="50" r="2.5" fill="#1E2A24"/>
-              <circle cx="65" cy="65" r="2.5" fill="#1E2A24"/>
-              <circle cx="65" cy="80" r="2.5" fill="#1E2A24"/>
-              <circle cx="135" cy="50" r="2.5" fill="#1E2A24"/>
-              <circle cx="135" cy="65" r="2.5" fill="#1E2A24"/>
-              <circle cx="135" cy="80" r="2.5" fill="#1E2A24"/>
+              <circle cx="65" cy="50" r="2.5" fill="#1E2A24" />
+              <circle cx="65" cy="65" r="2.5" fill="#1E2A24" />
+              <circle cx="65" cy="80" r="2.5" fill="#1E2A24" />
+              <circle cx="135" cy="50" r="2.5" fill="#1E2A24" />
+              <circle cx="135" cy="65" r="2.5" fill="#1E2A24" />
+              <circle cx="135" cy="80" r="2.5" fill="#1E2A24" />
               <!-- Red Cricket Ball -->
-              <circle cx="108" cy="65" r="8" fill="#B5382A" stroke="#FAF6EC" stroke-width="1.5"/>
-              <path d="M104 60 C108 63, 108 67, 104 70" stroke="#FAF6EC" stroke-width="1" stroke-dasharray="1.5 1"/>
+              <circle cx="108" cy="65" r="8" fill="#B5382A" stroke="#FAF6EC" stroke-width="1.5" />
+              <path d="M104 60 C108 63, 108 67, 104 70" stroke="#FAF6EC" stroke-width="1" stroke-dasharray="1.5 1" />
             </svg>
           </div>
         </div>
@@ -192,7 +234,12 @@
         <!-- Match Rules Scorecard Strip -->
         <div class="match-rules-strip">
           <div class="rules-label">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+            </svg>
             <span>MATCH RULES</span>
           </div>
           <div class="rule-chips-grid">
@@ -217,7 +264,7 @@
                   <span class="partner-card-hint">Proposes initial picks</span>
                 </div>
               </div>
-              <input type="text" id="inputPartnerA" class="partner-text-input" placeholder="Enter name (e.g. Rahul)" value="Rahul" maxlength="20">
+              <input type="text" id="inputPartnerA" class="partner-text-input" placeholder="e.g. Rahul or Dhruvam" value="Rahul" maxlength="20">
             </div>
 
             <!-- Partner B Card -->
@@ -229,17 +276,22 @@
                   <span class="partner-card-hint">Reviews and challenges picks</span>
                 </div>
               </div>
-              <input type="text" id="inputPartnerB" class="partner-text-input" placeholder="Enter name (e.g. Meena)" value="Meena" maxlength="20">
+              <input type="text" id="inputPartnerB" class="partner-text-input" placeholder="e.g. Meena or Tarun" value="Meena" maxlength="20">
             </div>
           </div>
 
           <div class="hero-actions-row">
             <button id="btnStartGame" class="btn btn-pitch btn-lg">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polygon points="5 3 19 12 5 21 5 3" />
+              </svg>
               <span>Start Team Selection</span>
             </button>
             <button id="btnResumeGame" class="btn btn-quiet btn-lg hidden">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+                <path d="M21 3v5h-5" />
+              </svg>
               <span>Resume Saved Squad</span>
             </button>
           </div>
@@ -262,41 +314,62 @@
         <div class="stats-cards-grid">
           <div class="coach-tip-card">
             <div class="tip-icon-wrap icon-pitch">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 20 10-10m0 0 2-2 4 4-2 2m-4-4-8 8-2 2-2-2 2-2Z"/></svg>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m4 20 10-10m0 0 2-2 4 4-2 2m-4-4-8 8-2 2-2-2 2-2Z" />
+              </svg>
             </div>
             <h4>1. Total Runs vs Batting Average</h4>
-            <p><strong>Total Runs</strong> shows quantity. <strong>Average</strong> reveals reliability per match. A high total often just reflects playing many games without assessing consistency.</p>
+            <p><strong>Total Runs</strong> shows quantity. <strong>Average</strong> reveals reliability per match. A
+              high total often just reflects playing many games without assessing consistency.</p>
           </div>
 
           <div class="coach-tip-card">
             <div class="tip-icon-wrap icon-amber">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+              </svg>
             </div>
             <h4>2. Strike Rate (Scoring Speed)</h4>
-            <p>Runs scored per 100 balls. Strike rate <strong>125+</strong> keeps the scoreboard moving. Strike rate <strong>105</strong> slows down the team and exerts pressure on partners.</p>
+            <p>Runs scored per 100 balls. Strike rate <strong>125+</strong> keeps the scoreboard moving. Strike rate
+              <strong>105</strong> slows down the team and exerts pressure on partners.
+            </p>
           </div>
 
           <div class="coach-tip-card">
             <div class="tip-icon-wrap icon-blue">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" />
+                <circle cx="12" cy="12" r="6" />
+                <circle cx="12" cy="12" r="2" />
+              </svg>
             </div>
             <h4>3. Bowling Economy (Tightness)</h4>
-            <p>Runs conceded per 6-ball over. Economy <strong>under 6.5</strong> dries up scoring. An economy of <strong>8.5+</strong> is expensive and leaks boundaries.</p>
+            <p>Runs conceded per 6-ball over. Economy <strong>under 6.5</strong> dries up scoring. An economy of
+              <strong>8.5+</strong> is expensive and leaks boundaries.
+            </p>
           </div>
 
           <div class="coach-tip-card tip-caution">
             <div class="tip-icon-wrap icon-red">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
             </div>
             <h4>4. Matches Played (Sample Trap)</h4>
-            <p>A batter with an 85 average in <strong>only 2 matches</strong> may have had one lucky afternoon. Prioritise proven form across <strong>10+ matches</strong>!</p>
+            <p>A batter with an 85 average in <strong>only 2 matches</strong> may have had one lucky afternoon.
+              Prioritise proven form across <strong>10+ matches</strong>!</p>
           </div>
         </div>
 
         <!-- Quick Check Question Card -->
         <div class="quick-check-box">
           <div class="qc-header">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F5D3A" stroke-width="2.2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F5D3A" stroke-width="2.2">
+              <path d="M9 11l3 3L22 4" />
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+            </svg>
             <span class="qc-badge">PRACTICE CHALLENGE</span>
           </div>
           <p id="qcQuestionText" class="qc-question"></p>
@@ -307,7 +380,9 @@
         <div class="text-center mt-4">
           <button id="btnProceedToBuild" class="btn btn-pitch btn-lg" disabled>
             <span>Proceed to Team Sheet</span>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
           </button>
         </div>
       </div>
@@ -315,13 +390,13 @@
 
     <!-- SCREEN 3: Build the Team Sheet (Shared Artefact) -->
     <section id="screenBuildTeam" class="screen-view">
-      
+
       <!-- Scoreboard Turn Strip -->
       <div class="scoreboard-strip" id="activeTurnStrip">
         <div class="turn-summary-col">
           <span id="turnStripAvatar" class="avatar-circle">A</span>
           <div>
-            <div id="turnStripLabel" class="turn-title">Rahul is proposing a pick</div>
+            <div id="turnStripLabel" class="turn-title">Partner A is proposing a pick</div>
             <span class="turn-subtitle">Discuss stats together before confirming</span>
           </div>
         </div>
@@ -373,7 +448,10 @@
           <!-- 11 Slot Lineup Sheet -->
           <div id="squadList" class="squad-list">
             <div class="empty-squad-notice">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/></svg>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <path d="M12 8v8M8 12h8" />
+              </svg>
               <p>Squad is empty. Tap any player card on the right to propose your first selection!</p>
             </div>
           </div>
@@ -431,7 +509,7 @@
 
         <div class="proposal-summary-box">
           <div class="proposal-meta">
-            <span id="pfProposerTag" class="badge">Rahul proposed:</span>
+            <span id="pfProposerTag" class="badge">Partner A proposed:</span>
             <span class="pick-order-text">Squad Spot #<span id="pfPickNumber">1</span></span>
           </div>
 
@@ -441,7 +519,8 @@
           <div class="chat-bubble-container mt-3">
             <div class="bubble-speaker-label">Proposer's Justification:</div>
             <div class="chat-bubble partner-a-bubble">
-              <p id="pfProposerReason" class="reason-quote">&ldquo;Consistently scores runs at a healthy average.&rdquo;</p>
+              <p id="pfProposerReason" class="reason-quote">&ldquo;Consistently scores runs at a healthy average.&rdquo;
+              </p>
             </div>
           </div>
         </div>
@@ -449,34 +528,48 @@
         <!-- Reviewer Decision Form -->
         <div class="peer-decision-form">
           <h3 class="decision-heading">What is your verdict, <span id="pfReviewerName2">Partner B</span>?</h3>
-          
+
           <div class="decision-buttons">
             <button id="btnPeerAgree" class="btn btn-pitch btn-lg btn-decision">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
               <span>Agree &amp; Add to Squad</span>
             </button>
             <button id="btnPeerNotSure" class="btn btn-sand btn-lg btn-decision">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
               <span>Not Sure / Challenge</span>
             </button>
           </div>
 
           <div class="form-group mt-3">
-            <label for="inputPeerReviewReason" class="decision-label">Explain your view to your partner (required):</label>
-            <input type="text" id="inputPeerReviewReason" class="decision-input" placeholder="e.g. I agree on their economy rate, or Devansh only played 2 games!" required>
+            <label for="inputPeerReviewReason" class="decision-label">Explain your view to your partner
+              (required):</label>
+            <input type="text" id="inputPeerReviewReason" class="decision-input"
+              placeholder="e.g. I agree on their economy rate, or Devansh only played 2 games!" required>
           </div>
 
           <!-- Coach Note Feedback Box -->
           <div id="pfFeedbackBox" class="coach-note-card hidden" aria-live="polite">
             <div class="coach-note-header">
-              <svg class="coach-svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+              <svg class="coach-svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 16v-4M12 8h.01" />
+              </svg>
               <div id="pfFeedbackTitle" class="feedback-title">Statistical Assessment</div>
             </div>
             <p id="pfFeedbackMsg" class="feedback-msg"></p>
             <div class="mt-3 text-right">
               <button id="btnProceedAfterFeedback" class="btn btn-pitch btn-sm">
                 <span>Continue to Team Sheet</span>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"/></svg>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
               </button>
             </div>
           </div>
@@ -489,11 +582,14 @@
       <div class="card max-w-850 mx-auto dispute-card">
         <div class="disagreement-banner">
           <div class="dispute-icon-wrap">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 3 4 4-4 4M20 7H4M8 21l-4-4 4-4M4 17h16"/></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m16 3 4 4-4 4M20 7H4M8 21l-4-4 4-4M4 17h16" />
+            </svg>
           </div>
           <div>
             <h2 class="dispute-title">Resolve Selection Disagreement</h2>
-            <p class="subtitle">Partners hold different viewpoints. Compare both players and agree on one governing rule.</p>
+            <p class="subtitle">Partners hold different viewpoints. Compare both players and agree on one governing
+              rule.</p>
           </div>
         </div>
 
@@ -519,19 +615,22 @@
         <div class="consensus-box">
           <h3 class="consensus-heading">Step: Agree on ONE Governing Rule</h3>
           <p class="subtext">Which principle should settle this decision?</p>
-          
+
           <div class="shared-rules-grid">
             <label class="rule-radio-label">
               <input type="radio" name="sharedRule" value="sample" checked>
-              <span><strong>Sample Size First:</strong> Prioritise proven consistency over 10+ matches rather than 2-3 flash performances.</span>
+              <span><strong>Sample Size First:</strong> Prioritise proven consistency over 10+ matches rather than 2-3
+                flash performances.</span>
             </label>
             <label class="rule-radio-label">
               <input type="radio" name="sharedRule" value="balance">
-              <span><strong>Team Balance First:</strong> Ensure we don't fall short of 4 bowlers or 4 batters before luxury picks.</span>
+              <span><strong>Team Balance First:</strong> Ensure we don't fall short of 4 bowlers or 4 batters before
+                luxury picks.</span>
             </label>
             <label class="rule-radio-label">
               <input type="radio" name="sharedRule" value="efficiency">
-              <span><strong>Efficiency Over Totals:</strong> Value economy under 6.5 and strike rate 125+ over raw counting totals.</span>
+              <span><strong>Efficiency Over Totals:</strong> Value economy under 6.5 and strike rate 125+ over raw
+                counting totals.</span>
             </label>
           </div>
 
@@ -551,7 +650,10 @@
       <div class="card max-w-850 mx-auto final-card">
         <div class="final-hero-header">
           <div class="trophy-badge">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path
+                d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0V2z" />
+            </svg>
           </div>
           <div>
             <h2 class="final-title">MATCH DAY SQUAD CONFIRMED</h2>
@@ -596,13 +698,15 @@
         <!-- Joint Reflections Form -->
         <div class="reflection-box">
           <h3 class="section-title">Joint Reflections (Required)</h3>
-          
+
           <div class="form-group mb-3">
             <label for="inputReflectA" class="reflect-label">
               <span class="avatar-tag avatar-a">A</span>
               <strong id="reflectNameA">Partner A</strong>: Which stat surprised you most during selection, and why?
             </label>
-            <textarea id="inputReflectA" rows="3" class="decision-input" placeholder="e.g. I realized Kabir had 520 runs but his strike rate was too slow for our team..." required></textarea>
+            <textarea id="inputReflectA" rows="3" class="decision-input"
+              placeholder="e.g. I realized Kabir had 520 runs but his strike rate was too slow for our team..."
+              required></textarea>
           </div>
 
           <div class="form-group mb-3">
@@ -610,15 +714,19 @@
               <span class="avatar-tag avatar-b">B</span>
               <strong id="reflectNameB">Partner B</strong>: How did you and your partner resolve a disagreement?
             </label>
-            <textarea id="inputReflectB" rows="3" class="decision-input" placeholder="e.g. When we disagreed on Devansh, we checked his matches played and agreed 2 was too risky..." required></textarea>
+            <textarea id="inputReflectB" rows="3" class="decision-input"
+              placeholder="e.g. When we disagreed on Devansh, we checked his matches played and agreed 2 was too risky..."
+              required></textarea>
           </div>
 
           <div class="mt-4 text-center">
             <button id="btnSubmitFinalProject" class="btn btn-pitch btn-lg">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
               <span>Submit Team to Facilitator</span>
             </button>
-            
+
             <div id="submitSuccessNotice" class="submit-success-notice hidden">
               <p>Team selection and reflections submitted successfully for facilitator review!</p>
               <div class="mt-3">
@@ -643,7 +751,7 @@
       </div>
       <div class="modal-body">
         <div id="modalPlayerStats" class="modal-player-stats"></div>
-        
+
         <div class="form-group mt-3">
           <label for="selectReason" class="form-label">Select primary statistical justification:</label>
           <select id="selectReason" class="form-select"></select>
@@ -651,7 +759,8 @@
 
         <div class="form-group mt-2">
           <label for="inputCustomReason" class="form-label">Or write your own explanation:</label>
-          <input type="text" id="inputCustomReason" class="decision-input" placeholder="e.g. Dependable keeper with 14 catches to prevent costly dropped chances">
+          <input type="text" id="inputCustomReason" class="decision-input"
+            placeholder="e.g. Dependable keeper with 14 catches to prevent costly dropped chances">
         </div>
       </div>
       <div class="modal-footer">
@@ -662,7 +771,8 @@
   </div>
 
   <!-- MODAL: Teacher Supervision (PIN: 1234) -->
-  <div id="teacherModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="teacherModalTitle">
+  <div id="teacherModal" class="modal-overlay hidden" role="dialog" aria-modal="true"
+    aria-labelledby="teacherModalTitle">
     <div class="modal-content max-w-850">
       <div class="modal-header teacher-modal-header">
         <div>
@@ -675,12 +785,16 @@
       <!-- PIN Auth Box -->
       <div id="teacherAuthSection" class="teacher-auth-box">
         <div class="auth-crest">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1F5D3A" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1F5D3A" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
         </div>
         <h4>Enter Facilitator PIN</h4>
         <p class="subtext">Demo PIN: <strong>1234</strong> (shared tablet simulation)</p>
         <div class="pin-entry-row">
-          <input type="password" id="inputTeacherPin" placeholder="&bull;&bull;&bull;&bull;" maxlength="4" class="pin-input">
+          <input type="password" id="inputTeacherPin" placeholder="&bull;&bull;&bull;&bull;" maxlength="4"
+            class="pin-input">
           <button id="btnSubmitTeacherPin" class="btn btn-pitch">Unlock</button>
         </div>
         <p id="teacherPinError" class="error-text hidden">Incorrect PIN. Please enter 1234.</p>
@@ -692,7 +806,7 @@
         <div class="teacher-stats-strip">
           <div class="teacher-stat-card">
             <span class="label">Learner Pair:</span>
-            <strong id="teacherPairNames">Rahul &amp; Meena</strong>
+            <strong id="teacherPairNames">Partner A &amp; Partner B</strong>
           </div>
           <div class="teacher-stat-card">
             <span class="label">Picks Completed:</span>
@@ -732,7 +846,9 @@
                 </tr>
               </thead>
               <tbody id="teacherActionLogBody">
-                <tr><td colspan="6" class="text-center text-muted">No actions recorded yet.</td></tr>
+                <tr>
+                  <td colspan="6" class="text-center text-muted">No actions recorded yet.</td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -760,18 +876,24 @@
       </div>
       <div class="modal-body about-body">
         <div class="about-card-badge">Candidate ID: <strong>23B3006</strong> &bull; ET 617 End-Sem</div>
-        <p><strong>CricTeam XI</strong> is an instructional system designed for collaborative mathematical problem-solving on shared tablets in low-resource community learning centers.</p>
-        
+        <p><strong>CricTeam XI</strong> is an instructional system designed for collaborative mathematical
+          problem-solving on shared tablets in low-resource community learning centers.</p>
+
         <h4>Card Alignment &amp; Pedagogy</h4>
         <ul class="about-list">
-          <li><strong>P6 (Collaborative Problem Solving):</strong> Mediated pass-and-play turns, shared XI sheet artefact, mandatory peer justifications, and structured disagreement resolution.</li>
-          <li><strong>T10 (Sports Team Statistics):</strong> Real fictional cricket stats crafted to expose M1 (aggregate totals bias) and M2 (small sample size bias).</li>
-          <li><strong>L2 (First-Generation Urban Learner):</strong> Designed for shared 10&quot; tablets in after-school NGO centers; clear Class 7&ndash;8 English; 100% offline-ready in localStorage.</li>
-          <li><strong>C5 (Teacher-in-the-Loop):</strong> Facilitator dashboard via PIN 1234 to audit equity and approve or override rule-based AI advice.</li>
+          <li><strong>P6 (Collaborative Problem Solving):</strong> Mediated pass-and-play turns, shared XI sheet
+            artefact, mandatory peer justifications, and structured disagreement resolution.</li>
+          <li><strong>T10 (Sports Team Statistics):</strong> Real fictional cricket stats crafted to expose M1
+            (aggregate totals bias) and M2 (small sample size bias).</li>
+          <li><strong>L2 (First-Generation Urban Learner):</strong> Designed for shared 10&quot; tablets in after-school
+            NGO centers; clear Class 7&ndash;8 English; 100% offline-ready in localStorage.</li>
+          <li><strong>C5 (Teacher-in-the-Loop):</strong> Facilitator dashboard via PIN 1234 to audit equity and approve
+            or override rule-based AI advice.</li>
         </ul>
 
         <h4>Collaboration Anti-Monopoly Response</h4>
-        <p>Dynamic participation tracking alerts learners if one partner monopolizes &gt; 70% of actions, addresses the quiet partner by name, and blocks team finalization until both contribute.</p>
+        <p>Dynamic participation tracking alerts learners if one partner monopolizes &gt; 70% of actions, addresses the
+          quiet partner by name, and blocks team finalization until both contribute.</p>
       </div>
       <div class="modal-footer">
         <button id="btnCloseAboutBtn" class="btn btn-pitch">Close</button>
@@ -794,4 +916,5 @@
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
 </body>
+
 </html>
